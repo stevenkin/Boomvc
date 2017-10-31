@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class IocContext {
     public static Ioc buildIoc(List<String> packageNames){
-        Ioc ioc = null;
+        Ioc ioc = new SimpleIoc();
         ClassScanner scanner = new CurrencyClassScanner();
         packageNames.stream()
                 .flatMap(p->scanner.scanClassByAnnotation(p, Bean.class))
