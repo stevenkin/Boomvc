@@ -10,12 +10,14 @@ import java.util.List;
  * Created by wjg on 2017/10/30.
  */
 public class IocContext {
+
     public static Ioc buildIoc(List<String> packageNames){
         Ioc ioc = new SimpleIoc();
         ClassScanner scanner = new CurrencyClassScanner();
         packageNames.stream()
                 .flatMap(p->scanner.scanClassByAnnotation(p, Bean.class))
                 .forEach(c->ioc.addBean(c));
+        ioc.init();
         return ioc;
     }
 }

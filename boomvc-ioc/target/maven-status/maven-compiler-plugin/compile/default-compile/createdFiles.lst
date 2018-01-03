@@ -1,0 +1,10 @@
+me\stevenkin\boomvc\ioc\annotation\Autowired.class
+me\stevenkin\boomvc\ioc\annotation\Bean.class
+me\stevenkin\boomvc\ioc\scanner\CurrencyClassScanner.class
+me\stevenkin\boomvc\ioc\IocContext.class
+me\stevenkin\boomvc\ioc\scanner\ClassScanner.class
+me\stevenkin\boomvc\ioc\define\BeanDefine.class
+me\stevenkin\boomvc\ioc\define\Injector.class
+me\stevenkin\boomvc\ioc\Ioc.class
+me\stevenkin\boomvc\ioc\define\FieldInjector.class
+me\stevenkin\boomvc\ioc\SimpleIoc.class

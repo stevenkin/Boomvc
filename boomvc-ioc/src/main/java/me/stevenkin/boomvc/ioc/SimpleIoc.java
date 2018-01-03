@@ -47,7 +47,7 @@ public class SimpleIoc implements Ioc {
         BeanDefine beanDefine = this.beanDefineMap.get(name);
         if(beanDefine==null)
             throw new IllegalStateException("name is error");
-        if(!beanDefine.getClazz().isAssignableFrom(type))
+        if(!type.isAssignableFrom(beanDefine.getClazz()))
             throw new IllegalStateException("type is error");
         return beanDefine.getObject();
     }
@@ -55,10 +55,10 @@ public class SimpleIoc implements Ioc {
     @Override
     public <T> T getBean(Class<T> type) {
         List<BeanDefine> classList = this.beanDefineMap.values().stream()
-                .filter(b->b.getClazz().isAssignableFrom(type))
+                .filter(b->type.isAssignableFrom(b.getClazz()))
                 .collect(Collectors.toList());
         if(classList.size()==0)
-            return null;
+            throw new IllegalStateException("no class");
         if(classList.size()==1)
             return type.cast(classList.get(0).getObject());
         throw new IllegalStateException("more than one class");
@@ -115,7 +115,7 @@ public class SimpleIoc implements Ioc {
 
     @Override
     public void init() {
-        this.beanDefineMap.values().forEach(b->b.init(SimpleIoc.this));
+        this.beanDefineMap.values().forEach(b->b.init(this));
         this.beanDefineMap.values().forEach(b->b.inject());
     }
 

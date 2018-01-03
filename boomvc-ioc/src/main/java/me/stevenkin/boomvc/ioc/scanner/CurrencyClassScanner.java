@@ -20,7 +20,7 @@ public class CurrencyClassScanner implements ClassScanner {
     @Override
     public Stream<Class<?>> scanClass(String packageName, Class<?> superClass, Class<? extends Annotation> annotationClass) {
         Set<Class<?>> classSet = new HashSet<>();
-        String packagePath = packageName.replaceAll(".", "/");
+        String packagePath = packageName.replace(".", "/");
         try {
             Enumeration<URL> urls = this.getClass().getClassLoader().getResources(packagePath);
             while(urls.hasMoreElements()){
@@ -86,7 +86,7 @@ public class CurrencyClassScanner implements ClassScanner {
                 String className = file1.getName().substring(0, file1.getName().indexOf(".class"));
                 try {
                     Class<?> clazz = Class.forName(packageName + "." + className);
-                    if (superClass != null && !clazz.isAssignableFrom(superClass))
+                    if (superClass != null && !superClass.isAssignableFrom(clazz))
                         continue;
                     if (annotationClass != null && clazz.getAnnotation(annotationClass) == null)
                         continue;

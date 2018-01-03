@@ -78,7 +78,7 @@ public class BeanDefine {
     public void init(Ioc ioc){
         Field[] fields = this.clazz.getDeclaredFields();
         for(Field field : fields){
-            if(field.getAnnotationsByType(Autowired.class)!=null)
+            if(field.getAnnotation(Autowired.class)!=null)
                 this.injectors.add(new FieldInjector(ioc,field));
         }
         if(this.isSingle&&this.object==null){
@@ -93,7 +93,7 @@ public class BeanDefine {
     }
 
     public void inject(){
-        this.injectors.forEach(i->i.inject(BeanDefine.this.object));
+        this.injectors.forEach(i->i.inject(this.object));
     }
 
 }

@@ -21,9 +21,13 @@ public class FieldInjector implements Injector {
 
     @Override
     public void inject(Object bean) {
-        String name = this.field.getAnnotationsByType(Autowired.class)[0].value();
+        String name = this.field.getAnnotation(Autowired.class).value();
         Class<?> fieldType = this.field.getType();
-        Object value = this.ioc.getBean(name, fieldType);
+        Object value = null;
+        if("".equals(name))
+            value = this.ioc.getBean(fieldType);
+        else
+            value = this.ioc.getBean(name, fieldType);
         this.field.setAccessible(true);
         try {
             this.field.set(bean,value);
