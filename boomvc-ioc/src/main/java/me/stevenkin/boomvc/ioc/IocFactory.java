@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by wjg on 2017/10/30.
  */
-public class IocContext {
+public class IocFactory {
 
     public static Ioc buildIoc(List<String> packageNames){
         Ioc ioc = new SimpleIoc();

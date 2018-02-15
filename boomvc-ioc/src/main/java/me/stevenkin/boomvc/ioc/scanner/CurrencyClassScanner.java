@@ -61,7 +61,7 @@ public class CurrencyClassScanner implements ClassScanner {
                     Class<?> clazz = Class.forName(classStr);
                     if(superClass!=null&&!clazz.isAssignableFrom(superClass))
                         continue;
-                    if(annotationClass!=null&&clazz.getAnnotation(annotationClass)==null)
+                    if(annotationClass != null && (clazz.getAnnotationsByType(annotationClass) == null || clazz.getAnnotationsByType(annotationClass).length==0))
                         continue;
                     classSet.add(clazz);
                 }
@@ -88,7 +88,7 @@ public class CurrencyClassScanner implements ClassScanner {
                     Class<?> clazz = Class.forName(packageName + "." + className);
                     if (superClass != null && !superClass.isAssignableFrom(clazz))
                         continue;
-                    if (annotationClass != null && clazz.getAnnotation(annotationClass) == null)
+                    if (annotationClass != null && (clazz.getAnnotationsByType(annotationClass) == null || clazz.getAnnotationsByType(annotationClass).length==0))
                         continue;
                     classSet.add(clazz);
                 } catch (ClassNotFoundException e) {
