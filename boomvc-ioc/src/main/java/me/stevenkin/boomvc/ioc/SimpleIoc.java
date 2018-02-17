@@ -1,5 +1,6 @@
 package me.stevenkin.boomvc.ioc;
 
+import me.stevenkin.boomvc.ioc.annotation.Annotations;
 import me.stevenkin.boomvc.ioc.annotation.Bean;
 import me.stevenkin.boomvc.ioc.define.BeanDefine;
 
@@ -16,7 +17,7 @@ public class SimpleIoc implements Ioc {
 
     @Override
     public void addBean(Object bean) {
-        Bean bean1 = bean.getClass().getAnnotation(Bean.class);
+        Bean bean1 = (Bean) Annotations.annotationOfType(bean.getClass(), Bean.class, new HashSet<>());
         if(bean1==null)
             throw new IllegalStateException("bean is error");
         this.addBean(bean1.value(),bean);
@@ -30,7 +31,7 @@ public class SimpleIoc implements Ioc {
 
     @Override
     public void addBean(Class<?> type) {
-        Bean bean1 = type.getAnnotation(Bean.class);
+        Bean bean1 = (Bean) Annotations.annotationOfType(type, Bean.class, new HashSet<>());
         if(bean1==null)
             throw new IllegalStateException("bean is error");
         this.addBean(bean1.value(),type);
@@ -66,7 +67,7 @@ public class SimpleIoc implements Ioc {
 
     @Override
     public void setBean(Object bean) {
-        Bean bean1 = bean.getClass().getAnnotation(Bean.class);
+        Bean bean1 = (Bean) Annotations.annotationOfType(bean.getClass(), Bean.class, new HashSet<>());
         if(bean1==null)
             throw new IllegalStateException("bean is error");
         this.setBean(bean1.value(),bean);

@@ -1,5 +1,8 @@
 package me.stevenkin.boomvc.ioc.scanner;
 
+import me.stevenkin.boomvc.ioc.annotation.Annotations;
+import me.stevenkin.boomvc.ioc.annotation.Bean;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -61,7 +64,7 @@ public class CurrencyClassScanner implements ClassScanner {
                     Class<?> clazz = Class.forName(classStr);
                     if(superClass!=null&&!clazz.isAssignableFrom(superClass))
                         continue;
-                    if(annotationClass != null && (clazz.getAnnotationsByType(annotationClass) == null || clazz.getAnnotationsByType(annotationClass).length==0))
+                    if(annotationClass != null && Annotations.annotationOfType(clazz, Bean.class, new HashSet<>())==null)
                         continue;
                     classSet.add(clazz);
                 }
@@ -88,7 +91,7 @@ public class CurrencyClassScanner implements ClassScanner {
                     Class<?> clazz = Class.forName(packageName + "." + className);
                     if (superClass != null && !superClass.isAssignableFrom(clazz))
                         continue;
-                    if (annotationClass != null && (clazz.getAnnotationsByType(annotationClass) == null || clazz.getAnnotationsByType(annotationClass).length==0))
+                    if (annotationClass != null && Annotations.annotationOfType(clazz, Bean.class, new HashSet<>())==null)
                         continue;
                     classSet.add(clazz);
                 } catch (ClassNotFoundException e) {
