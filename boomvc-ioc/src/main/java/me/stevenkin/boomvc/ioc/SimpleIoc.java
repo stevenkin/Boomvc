@@ -2,6 +2,7 @@ package me.stevenkin.boomvc.ioc;
 
 import me.stevenkin.boomvc.ioc.annotation.Annotations;
 import me.stevenkin.boomvc.ioc.annotation.Bean;
+import me.stevenkin.boomvc.ioc.annotation.ConfigProperties;
 import me.stevenkin.boomvc.ioc.define.BeanDefine;
 
 import java.util.*;
@@ -116,6 +117,13 @@ public class SimpleIoc implements Ioc {
 
     @Override
     public void init() {
+        Set<String> locations = new HashSet<>();
+        this.beanDefineMap.values().stream()
+                .filter(b->b.getClazz().getAnnotation(ConfigProperties.class)!=null)
+                .forEach(b->{
+                    b.setEnvironment(Environment.of(b.getClazz().getAnnotation(ConfigProperties.class).locations()));
+                });
+
         this.beanDefineMap.values().forEach(b->b.init(this));
         this.beanDefineMap.values().forEach(b->b.inject());
     }

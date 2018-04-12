@@ -1,7 +1,9 @@
 package me.stevenkin.boomvc.ioc.define;
 
+import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.ioc.annotation.Autowired;
+import me.stevenkin.boomvc.ioc.annotation.ConfigProperties;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ public class BeanDefine {
 
     private List<Injector> injectors = new ArrayList<>();
 
+    private Environment environment;
+
     public BeanDefine(Class<?> clazz) {
         this(clazz.getName(),clazz,true);
     }
@@ -41,6 +45,14 @@ public class BeanDefine {
         this.clazz = clazz;
         this.object = object;
         this.isSingle = isSingle;
+    }
+
+    public BeanDefine(String beanName, Class<?> clazz, Object object, boolean isSingle, Environment environment) {
+        this.beanName = beanName;
+        this.clazz = clazz;
+        this.object = object;
+        this.isSingle = isSingle;
+        this.environment = environment;
     }
 
     public String getBeanName() {
@@ -75,11 +87,30 @@ public class BeanDefine {
         isSingle = single;
     }
 
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
     public void init(Ioc ioc){
         Field[] fields = this.clazz.getDeclaredFields();
         for(Field field : fields){
             if(field.getAnnotation(Autowired.class)!=null)
                 this.injectors.add(new FieldInjector(ioc,field));
+        }
+        ConfigProperties configProperties = this.clazz.getAnnotation(ConfigProperties.class);
+        if(configProperties!=null){
+            for(Field field : fields) {
+                if (field.getType().equals(String.class)) {
+                    String key = configProperties.prefix() + "." + field.getName();
+                    if(key.startsWith("."))
+                        key = key.substring(1);
+                    this.injectors.add(new ValueInjector(this.environment, field, key));
+                }
+            }
         }
         if(this.isSingle&&this.object==null){
             try {
