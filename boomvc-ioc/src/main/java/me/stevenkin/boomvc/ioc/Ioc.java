@@ -22,6 +22,8 @@ public interface Ioc {
 
     <T> T getBean(Class<T> type);
 
+    <T> List<T> getBeans(Class<T> type);
+
     void setBean(Object bean);
 
     void setBean(String name, Object bean);

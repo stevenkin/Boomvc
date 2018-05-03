@@ -7,6 +7,7 @@ import me.stevenkin.boomvc.ioc.define.BeanDefine;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -56,14 +57,21 @@ public class SimpleIoc implements Ioc {
 
     @Override
     public <T> T getBean(Class<T> type) {
-        List<BeanDefine> classList = this.beanDefineMap.values().stream()
-                .filter(b->type.isAssignableFrom(b.getClazz()))
+        List<T> beans = this.getBeans(type);
+        if(beans.size()==1)
+            return beans.get(0);
+        if(beans.size()==0)
+            throw new IllegalStateException("no found bean");
+        throw new IllegalStateException("found more one beans");
+    }
+
+    @Override
+    public <T> List<T> getBeans(Class<T> type) {
+        List<T> beans = this.beanDefineMap.values().stream()
+                .filter(b -> type.isAssignableFrom(b.getClazz()))
+                .map(b->type.cast(b.getObject()))
                 .collect(Collectors.toList());
-        if(classList.size()==0)
-            throw new IllegalStateException("no class");
-        if(classList.size()==1)
-            return type.cast(classList.get(0).getObject());
-        throw new IllegalStateException("more than one class");
+        return beans;
     }
 
     @Override
