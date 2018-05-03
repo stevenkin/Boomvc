@@ -10,9 +10,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by wjg on 2017/10/24.
- */
+
 public class BeanDefine {
 
     private String beanName;
