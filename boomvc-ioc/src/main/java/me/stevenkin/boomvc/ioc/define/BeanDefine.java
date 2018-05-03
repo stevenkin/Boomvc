@@ -4,6 +4,7 @@ import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.ioc.annotation.Autowired;
 import me.stevenkin.boomvc.ioc.annotation.ConfigProperties;
+import me.stevenkin.boomvc.ioc.annotation.Value;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -104,8 +105,10 @@ public class BeanDefine {
         ConfigProperties configProperties = this.clazz.getAnnotation(ConfigProperties.class);
         if(configProperties!=null){
             for(Field field : fields) {
-                if (field.getType().equals(String.class)) {
-                    String key = configProperties.prefix() + "." + field.getName();
+                Value value = field.getAnnotation(Value.class);
+                if (value != null && field.getType().equals(String.class)) {
+                    String name = "".equals(value.value()) ? field.getName() : value.value();
+                    String key = configProperties.prefix() + "." + name;
                     if(key.startsWith("."))
                         key = key.substring(1);
                     this.injectors.add(new ValueInjector(this.environment, field, key));
@@ -115,9 +118,7 @@ public class BeanDefine {
         if(this.isSingle&&this.object==null){
             try {
                 this.object = this.clazz.newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
