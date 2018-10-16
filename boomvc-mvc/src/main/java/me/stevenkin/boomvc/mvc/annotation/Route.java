@@ -1,6 +1,6 @@
 package me.stevenkin.boomvc.mvc.annotation;
 
-import me.stevenkin.boomvc.mvc.http.HttpMethod;
+import me.stevenkin.boomvc.http.HttpMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

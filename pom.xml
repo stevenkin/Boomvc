@@ -11,6 +11,7 @@
     <modules>
         <module>boomvc-ioc</module>
         <module>boomvc-mvc</module>
+        <module>boomvc-http</module>
     </modules>
 
     <properties>
