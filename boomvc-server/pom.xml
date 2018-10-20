@@ -9,9 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>boomvc-mvc</artifactId>
+    <artifactId>boomvc-server</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>me.stevenkin</groupId>
             <artifactId>boomvc-http</artifactId>
@@ -20,7 +26,7 @@
 
         <dependency>
             <groupId>me.stevenkin</groupId>
-            <artifactId>boomvc-ioc</artifactId>
+            <artifactId>boomvc-mvc</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
