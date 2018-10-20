@@ -8,6 +8,7 @@ import me.stevenkin.boomvc.ioc.annotation.Value;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -21,7 +22,7 @@ public class BeanDefine {
 
     private boolean isSingle;
 
-    private List<Injector> injectors = new ArrayList<>();
+    private List<Injector> injectors = new LinkedList<>();
 
     private Environment environment;
 
@@ -103,9 +104,8 @@ public class BeanDefine {
         ConfigProperties configProperties = this.clazz.getAnnotation(ConfigProperties.class);
         if(configProperties!=null){
             for(Field field : fields) {
-                Value value = field.getAnnotation(Value.class);
-                if (value != null && field.getType().equals(String.class)) {
-                    String name = "".equals(value.value()) ? field.getName() : value.value();
+                if (field.getType().equals(String.class)) {
+                    String name = field.getName();
                     String key = configProperties.prefix() + "." + name;
                     if(key.startsWith("."))
                         key = key.substring(1);

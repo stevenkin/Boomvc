@@ -10,6 +10,4 @@ public @interface ConfigProperties {
 
     String prefix() default "";
 
-    String[] locations() default {"classpath:application.properties"};
-
 }

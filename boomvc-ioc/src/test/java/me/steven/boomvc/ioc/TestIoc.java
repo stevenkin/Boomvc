@@ -15,7 +15,7 @@ public class TestIoc {
 
     @Test
     public void test(){
-        Ioc ioc = IocFactory.buildIoc(Arrays.asList("me.steven.test"));
+        Ioc ioc = IocFactory.buildIoc(Arrays.asList("me.steven.test"),"app1.properties","app2.properties");
         ioc.getNames().forEach(System.out::println);
         ioc.getBeans().forEach(System.out::println);
         Config1 config1 = ioc.getBean(Config1.class);

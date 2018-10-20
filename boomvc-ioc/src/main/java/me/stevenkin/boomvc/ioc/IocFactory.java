@@ -11,13 +11,14 @@ import java.util.List;
  */
 public class IocFactory {
 
-    public static Ioc buildIoc(List<String> packageNames){
+    public static Ioc buildIoc(List<String> packageNames,  String... configLocations){
         Ioc ioc = new SimpleIoc();
         ClassScanner scanner = new CurrencyClassScanner();
         packageNames.stream()
                 .flatMap(p->scanner.scanClassByAnnotation(p, Bean.class))
                 .forEach(c->ioc.addBean(c));
-        ioc.init();
+        Environment environment = Environment.of(configLocations);
+        ioc.init(environment);
         return ioc;
     }
 }

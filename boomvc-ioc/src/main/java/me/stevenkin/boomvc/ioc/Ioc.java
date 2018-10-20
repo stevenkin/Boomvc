@@ -40,7 +40,7 @@ public interface Ioc {
 
     void remove(String name);
 
-    void init();
+    void init(Environment environment);
 
     void clear();
 }

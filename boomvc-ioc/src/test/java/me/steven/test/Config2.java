@@ -2,7 +2,7 @@ package me.steven.test;
 
 import me.stevenkin.boomvc.ioc.annotation.ConfigProperties;
 
-@ConfigProperties(prefix = "me.stevenkin", locations = {"classpath:app2.properties"})
+@ConfigProperties(prefix = "me.stevenkin")
 public class Config2 {
     private String key1;
 
