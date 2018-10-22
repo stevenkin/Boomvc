@@ -131,6 +131,10 @@ public class Environment {
         this.props.put(key, value);
     }
 
+    public void putifAbsent(String key, String value){
+        this.props.putIfAbsent(key, value);
+    }
+
     public void putAll(Map map){
         this.props.putAll(map);
     }
@@ -141,6 +145,14 @@ public class Environment {
 
     public Set<String> getKeys(){
         return this.props.keySet();
+    }
+
+    public boolean isEmpty(){
+        return this.props.isEmpty();
+    }
+
+    public Map<String, String> toMap(){
+        return new HashMap<>(this.props);
     }
 
 

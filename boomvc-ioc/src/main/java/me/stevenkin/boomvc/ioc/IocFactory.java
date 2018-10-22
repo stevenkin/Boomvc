@@ -12,12 +12,16 @@ import java.util.List;
 public class IocFactory {
 
     public static Ioc buildIoc(List<String> packageNames,  String... configLocations){
+        Environment environment = Environment.of(configLocations);
+        return buildIoc(packageNames, environment);
+    }
+
+    public static Ioc buildIoc(List<String> packageNames, Environment environment){
         Ioc ioc = new SimpleIoc();
         ClassScanner scanner = new CurrencyClassScanner();
         packageNames.stream()
                 .flatMap(p->scanner.scanClassByAnnotation(p, Bean.class))
                 .forEach(c->ioc.addBean(c));
-        Environment environment = Environment.of(configLocations);
         ioc.init(environment);
         return ioc;
     }
