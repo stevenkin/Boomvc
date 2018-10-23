@@ -58,6 +58,8 @@ public interface HttpResponse {
 
     void redirect(String newUri);
 
+    byte[] rawByte();
+
 
 
 

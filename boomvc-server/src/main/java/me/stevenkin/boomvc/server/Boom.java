@@ -3,6 +3,7 @@ package me.stevenkin.boomvc.server;
 import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.ioc.IocFactory;
+import me.stevenkin.boomvc.server.imp.TinyServer;
 
 import java.io.*;
 import java.net.URL;
@@ -34,7 +35,6 @@ public class Boom {
 
     private String bannerText;
 
-    private String bannerPath = "/banner.txt";
 
     public static Boom me(){
         return of();
@@ -112,12 +112,10 @@ public class Boom {
     }
 
     public Boom listen(String address, int port) {
-        if(port<1024)
-            throw new IllegalStateException("server port is illegal");
         if(null == address)
             throw new NullPointerException();
         environment(ENV_KEY_SERVER_ADDRESS, address);
-        environment(ENV_KEY_SERVER_PORT, Integer.toString(port));
+        listen(port);
         return this;
     }
 
@@ -130,26 +128,22 @@ public class Boom {
         addPackages(bootClass.getPackage().getName());
         listen(address, port);
         initEnv(args);
+        initBanner();
         this.ioc = IocFactory.buildIoc(Arrays.asList(this.environment.getValue(ENV_KEY_IOC_PACKAGES).split(",")), this.environment);
+        this.server = new TinyServer();
         this.server.init(this);
         this.server.start();
     }
 
-    public Boom bannerText(String bannerText){
-        this.bannerText = bannerText;
-        return this;
-    }
-
     public Boom bannerPath(String bannerPath){
-        this.bannerPath = bannerPath;
+        this.environment.put(ENV_KEY_BANNER_PATH, bannerPath);
         return this;
     }
 
     private void initBanner(){
-        if(this.bannerText != null)
-            return ;
+        String bannerPath = this.environment.getValue(ENV_KEY_BANNER_PATH, DEFAULT_BANNER_PATH);
         this.bannerText = BANNER_TEXT;
-        URL url = Boom.class.getResource(this.bannerPath);
+        URL url = Boom.class.getResource(bannerPath);
         if(null != url) {
             try {
                 this.bannerText = Files.newBufferedReader(new File(url.getFile()).toPath()).lines().collect(Collectors.joining("/r/n"));

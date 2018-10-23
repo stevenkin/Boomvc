@@ -28,6 +28,7 @@ public interface Const {
     String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     String INTERNAL_SERVER_ERROR_HTML = "<center><h1>500 Internal Server Error</h1><hr/></center>";
     String DEFAULT_THREAD_NAME = "boom_thread_2333_";
+    String DEFAULT_BANNER_PATH = "/banner.txt";
     List<String> DEFAULT_STATICS = new ArrayList<>(
             Arrays.asList("/favicon.ico", "/robots.txt", "/static", "/upload", "/webjars/"));
 

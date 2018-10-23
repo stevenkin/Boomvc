@@ -143,6 +143,10 @@ public class Environment {
         return this.props.get(key);
     }
 
+    public String getValue(String key, String defaultValue){
+        return Optional.ofNullable(getValue(key)).orElse(defaultValue);
+    }
+
     public Set<String> getKeys(){
         return this.props.keySet();
     }

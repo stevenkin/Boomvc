@@ -5,9 +5,8 @@ import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.MvcDispatcher;
 import me.stevenkin.boomvc.server.Boom;
 import me.stevenkin.boomvc.server.Server;
-import me.stevenkin.boomvc.server.ServerStatus;
+import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 
-import java.util.concurrent.ExecutorService;
 
 public class TinyServer implements Server {
 
@@ -19,11 +18,9 @@ public class TinyServer implements Server {
 
     private Environment environment;
 
-    private Thread acceptor;
+    private EventExecutorGroup boss;
 
-    private ExecutorService httpProtocolParsers;
-
-    private ExecutorService businessWorkers;
+    private EventExecutorGroup workers;
 
 
 
@@ -42,8 +39,4 @@ public class TinyServer implements Server {
 
     }
 
-    @Override
-    public ServerStatus getServerStatus() {
-        return null;
-    }
 }

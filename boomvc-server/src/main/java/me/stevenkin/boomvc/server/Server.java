@@ -1,6 +1,5 @@
 package me.stevenkin.boomvc.server;
 
-import me.stevenkin.boomvc.ioc.Environment;
 
 public interface Server {
 
@@ -9,7 +8,5 @@ public interface Server {
     void start();
 
     void stop();
-
-    ServerStatus getServerStatus();
 
 }
