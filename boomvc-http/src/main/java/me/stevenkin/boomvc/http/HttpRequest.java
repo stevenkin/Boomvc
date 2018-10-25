@@ -42,8 +42,6 @@ public interface HttpRequest {
         return header.map(h->h.value()).orElse("");
     }
 
-    String remotePort();
-
     String uri();
 
     String url();

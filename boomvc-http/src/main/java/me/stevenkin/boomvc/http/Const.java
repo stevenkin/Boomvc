@@ -57,10 +57,12 @@ public interface Const {
     String ENV_KEY_TEMPLATE_PATH = "mvc.template.path";
     String ENV_KEY_SERVER_ADDRESS = "server.address";
     String ENV_KEY_SERVER_PORT = "server.port";
+    String ENV_KEY_SERVER_ACCEPT_THREAD_COUNT = "server.accept-thread.count";
+    String ENV_KEY_SERVER_IO_THREAD_COUNT = "server.io-thread.count";
 
     int DEFAULT_SO_BACKLOG = 1024;
-    int DEFAULT_PARSE_THREAD_COUNT = 2;
-    int DEFAULT_BUSINESS_THREAD_COUNT = Runtime.getRuntime().availableProcessors();
+    int DEFAULT_ACCEPT_THREAD_COUNT = 1;
+    int DEFAULT_IO_THREAD_COUNT = Runtime.getRuntime().availableProcessors();
 
     String NEW_LINE = "\r\n";
 

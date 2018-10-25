@@ -1,6 +1,7 @@
 package me.stevenkin.boomvc.server.executor;
 
 import me.stevenkin.boomvc.mvc.MvcDispatcher;
+import me.stevenkin.boomvc.server.task.Task;
 
 import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.ThreadFactory;
 import java.util.stream.IntStream;
 
-public class EventExecutorGroup {
+public class EventExecutorGroup implements Task {
 
     private int threadNum;
 
@@ -58,5 +59,15 @@ public class EventExecutorGroup {
             this.index++;
         }
         this.executorList.get(index1).register(channel, ops, att);
+    }
+
+    @Override
+    public void start() {
+        this.executorList.forEach(e->e.start());
+    }
+
+    @Override
+    public void stop() {
+        this.executorList.forEach(e->e.stop());
     }
 }

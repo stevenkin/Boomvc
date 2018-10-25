@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.server.Event;
+package me.stevenkin.boomvc.server.task;
 
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
@@ -14,13 +14,15 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-public class EventLoop implements Runnable {
+public class EventLoop implements Runnable, Task {
 
     private Selector selector;
 
     private EventExecutorGroup childGroup;
 
     private MvcDispatcher dispatcher;
+
+    private volatile boolean isStart = false;
 
     public EventLoop(Selector selector, EventExecutorGroup childGroup, MvcDispatcher dispatcher) {
         this.selector = selector;
@@ -30,7 +32,7 @@ public class EventLoop implements Runnable {
 
     @Override
     public void run() {
-        while(true){
+        while(this.isStart){
             try {
                 int n = selector.select();
                 if(n<=0)
@@ -100,5 +102,15 @@ public class EventLoop implements Runnable {
         } while(!buffer.hasRemaining());
         if(buffer != null)
             httpProtocolParser.putResponseBuffer(buffer);
+    }
+
+    @Override
+    public void start() {
+        this.isStart = true;
+    }
+
+    @Override
+    public void stop() {
+        this.isStart = false;
     }
 }

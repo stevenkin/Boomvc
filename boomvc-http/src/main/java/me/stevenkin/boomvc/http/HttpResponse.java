@@ -3,6 +3,7 @@ package me.stevenkin.boomvc.http;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 
 public interface HttpResponse {
 
@@ -58,7 +59,7 @@ public interface HttpResponse {
 
     void redirect(String newUri);
 
-    byte[] rawByte();
+    PrintWriter writer();
 
 
 
