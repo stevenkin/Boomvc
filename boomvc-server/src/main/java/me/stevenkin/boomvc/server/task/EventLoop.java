@@ -85,7 +85,10 @@ public class EventLoop implements Runnable, Task {
             response = httpProtocolParser.genHttpResponse();
             this.dispatcher.dispatcher(request, response);
             httpProtocolParser.putHttpResponse(response);
-            key.interestOps(SelectionKey.OP_READ|SelectionKey.OP_WRITE);
+            if(httpProtocolParser.isClosed())
+                key.interestOps(SelectionKey.OP_WRITE);
+            else
+                key.interestOps(SelectionKey.OP_READ|SelectionKey.OP_WRITE);
         }
     }
 
@@ -95,7 +98,10 @@ public class EventLoop implements Runnable, Task {
         do{
             buffer = httpProtocolParser.takeHttpResponseBuffer();
             if(buffer == null){
-                key.interestOps(SelectionKey.OP_READ);
+                if(httpProtocolParser.isClosed())
+                    key.channel().close();
+                else
+                    key.interestOps(SelectionKey.OP_READ);
                 break;
             }
             ((SocketChannel)key.channel()).write(buffer);

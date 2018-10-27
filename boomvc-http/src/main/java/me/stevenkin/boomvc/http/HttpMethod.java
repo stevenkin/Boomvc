@@ -12,4 +12,12 @@ public enum HttpMethod {
     public String text(){
         return this.text;
     }
+
+    public static HttpMethod getHttpMethod(String methodStr){
+        for(HttpMethod method : values()){
+            if(method.text.equalsIgnoreCase(methodStr))
+                return method;
+        }
+        throw new IllegalArgumentException();
+    }
 }

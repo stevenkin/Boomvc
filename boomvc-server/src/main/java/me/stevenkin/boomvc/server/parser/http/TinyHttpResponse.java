@@ -73,5 +73,10 @@ public class TinyHttpResponse implements HttpResponse {
         return null;
     }
 
+    @Override
+    public byte[] rawByte() {
+        return new byte[0];
+    }
+
 
 }

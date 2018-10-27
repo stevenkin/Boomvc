@@ -61,6 +61,7 @@ public interface HttpResponse {
 
     PrintWriter writer();
 
+    byte[] rawByte();
 
 
 

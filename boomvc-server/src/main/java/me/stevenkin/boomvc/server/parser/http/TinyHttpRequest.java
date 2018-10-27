@@ -8,7 +8,9 @@ import me.stevenkin.boomvc.http.multipart.FileItem;
 import me.stevenkin.boomvc.http.session.HttpSession;
 import me.stevenkin.boomvc.server.WebContext;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -28,9 +30,9 @@ public class TinyHttpRequest implements HttpRequest {
 
     private HttpRequestLine requestLine;
 
-    private Multimap<String, HttpHeader> headers = LinkedListMultimap.create();
+    private Multimap<String, HttpHeader> headers;
 
-    private Multimap<String, HttpQueryParameter> parameters = LinkedListMultimap.create();
+    private Multimap<String, HttpQueryParameter> parameters;
 
     private Map<String, HttpCookie> cookies = new HashMap<>();
 
@@ -41,6 +43,8 @@ public class TinyHttpRequest implements HttpRequest {
     private Map<String, Object> attributes = new HashMap<>();
 
     private byte[] rawBody;
+
+    private InputStream bodyInputStream;
 
     @Override
     public String uri() {
@@ -179,6 +183,40 @@ public class TinyHttpRequest implements HttpRequest {
 
     @Override
     public InputStream body() {
-        return null;
+        return new ByteArrayInputStream(this.rawBody);
     }
+
+    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, SocketAddress remoteAddress){
+        TinyHttpRequest request = new TinyHttpRequest();
+        request.requestLine = requestLine;
+        request.headers = LinkedListMultimap.create(requestHeader);
+        request.remoteAddress = remoteAddress.toString();
+
+        request.url = request.requestLine.url();
+        int pathEndPos = request.url.indexOf('?');
+        request.uri = pathEndPos < 0 ? request.url : request.url.substring(0, pathEndPos);
+        request.protocol = request.requestLine.protocol();
+        request.method = request.requestLine.method().text();
+
+        List<HttpHeader> headers = new ArrayList<>(request.headers.get("Connection"));
+        if(headers.size() == 1 && headers.get(0).value().equalsIgnoreCase("close")){
+            request.keepAlive = false;
+        }else
+            request.keepAlive = true;
+
+    }
+
+    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, byte[] requestBody, SocketAddress remoteAddress){
+        TinyHttpRequest request = of(requestLine, requestHeader, remoteAddress);
+        request.rawBody = requestBody;
+        return request;
+    }
+
+    private static Multimap<String, HttpQueryParameter> parseQueryParameter(String queryString){
+
+    }
+
+
+
+
 }
