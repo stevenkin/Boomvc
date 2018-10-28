@@ -128,7 +128,7 @@ public interface HttpRequest {
             InputStream inputStream = body();
             byte[] body = new byte[inputStream.available()];
             inputStream.read(body);
-            return new String(body, "UTF-8");
+            return new String(body, "ISO-8859-1");
         }
         return null;
     }

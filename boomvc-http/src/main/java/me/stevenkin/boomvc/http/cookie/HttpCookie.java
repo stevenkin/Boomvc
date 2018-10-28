@@ -20,6 +20,11 @@ public class HttpCookie {
         this.httpOnly = httpOnly;
     }
 
+    public HttpCookie(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
     public String name() {
         return name;
     }

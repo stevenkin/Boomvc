@@ -1,7 +1,7 @@
 package me.stevenkin.boomvc.server.parser.http;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.base.Splitter;
+import com.google.common.collect.*;
 import me.stevenkin.boomvc.http.*;
 import me.stevenkin.boomvc.http.cookie.HttpCookie;
 import me.stevenkin.boomvc.http.multipart.FileItem;
@@ -9,9 +9,10 @@ import me.stevenkin.boomvc.http.session.HttpSession;
 import me.stevenkin.boomvc.server.WebContext;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketAddress;
-import java.nio.ByteBuffer;
+import java.net.URLDecoder;
 import java.util.*;
 
 public class TinyHttpRequest implements HttpRequest {
@@ -24,6 +25,8 @@ public class TinyHttpRequest implements HttpRequest {
 
     private String  protocol;
 
+    private String queryString;
+
     private String  method;
 
     private boolean keepAlive;
@@ -34,9 +37,9 @@ public class TinyHttpRequest implements HttpRequest {
 
     private Multimap<String, HttpQueryParameter> parameters;
 
-    private Map<String, HttpCookie> cookies = new HashMap<>();
+    private Map<String, HttpCookie> cookies;
 
-    private Map<String, FileItem> fileItems = new HashMap<>();
+    private Map<String, FileItem> fileItems;
 
     private HttpSession session;
 
@@ -44,21 +47,20 @@ public class TinyHttpRequest implements HttpRequest {
 
     private byte[] rawBody;
 
-    private InputStream bodyInputStream;
 
     @Override
     public String uri() {
-        return null;
+        return this.uri;
     }
 
     @Override
     public String url() {
-        return null;
+        return this.url;
     }
 
     @Override
     public String protocol() {
-        return null;
+        return this.protocol;
     }
 
     @Override
@@ -68,27 +70,28 @@ public class TinyHttpRequest implements HttpRequest {
 
     @Override
     public String queryString() {
-        return null;
+        return this.queryString;
     }
 
     @Override
     public List<HttpQueryParameter> parameters() {
-        return null;
+        return ImmutableList.copyOf(this.parameters.values());
     }
 
     @Override
     public Set<String> parameterNames() {
-        return null;
+        return ImmutableSet.copyOf(this.parameters.keys());
     }
 
     @Override
     public Optional<List<HttpQueryParameter>> parameters(String name) {
-        return Optional.empty();
+        return Optional.of((List<HttpQueryParameter>)(ImmutableList.copyOf(this.parameters.get(name))))
+                .filter(list->list.size()>0);
     }
 
     @Override
     public HttpMethod httpMethod() {
-        return null;
+        return HttpMethod.getHttpMethod(this.method);
     }
 
     @Override
@@ -98,32 +101,33 @@ public class TinyHttpRequest implements HttpRequest {
 
     @Override
     public List<HttpCookie> cookies() {
-        return null;
+        return ImmutableList.copyOf(this.cookies.values());
     }
 
     @Override
     public Optional<HttpCookie> cookieRaw(String name) {
-        return Optional.empty();
+        return Optional.ofNullable(this.cookies.get(name));
     }
 
     @Override
     public List<HttpHeader> headers() {
-        return null;
+        return ImmutableList.copyOf(this.headers.values());
     }
 
     @Override
     public Set<String> headerNames() {
-        return null;
+        return ImmutableSet.copyOf(this.headers.keySet());
     }
 
     @Override
     public Optional<List<HttpHeader>> headers(String name) {
-        return Optional.empty();
+        return Optional.of((List<HttpHeader>)ImmutableList.copyOf(this.headers.get(name)))
+                .filter(list->list.size()>0);
     }
 
     @Override
     public boolean keepAlive() {
-        return false;
+        return this.keepAlive;
     }
 
     @Override
@@ -133,32 +137,37 @@ public class TinyHttpRequest implements HttpRequest {
 
     @Override
     public boolean isAjax() {
-        return false;
+        Optional<HttpHeader> header = this.firstHeader("x-requested-with");
+        return header.isPresent() && header.get().value().equalsIgnoreCase("XMLHttpRequest");
     }
 
     @Override
     public boolean isForm() {
-        return false;
+        Optional<HttpHeader> header = this.firstHeader("Content-Type");
+        return header.isPresent() && header.get().value().startsWith("application/x-www-form-urlencoded");
     }
 
     @Override
     public boolean isJson() {
-        return false;
+        Optional<HttpHeader> header = this.firstHeader("Content-Type");
+        return header.isPresent() && header.get().value().startsWith("application/json");
     }
 
     @Override
     public boolean isText() {
-        return false;
+        Optional<HttpHeader> header = this.firstHeader("Content-Type");
+        return header.isPresent() && header.get().value().startsWith("text/plain");
     }
 
     @Override
     public boolean isHtml() {
-        return false;
+        Optional<HttpHeader> header = this.firstHeader("Content-Type");
+        return header.isPresent() && header.get().value().startsWith("text/html");
     }
 
     @Override
     public Map<String, Object> attributes() {
-        return null;
+        return new HashMap<>(this.attributes);
     }
 
     @Override
@@ -195,6 +204,10 @@ public class TinyHttpRequest implements HttpRequest {
         request.url = request.requestLine.url();
         int pathEndPos = request.url.indexOf('?');
         request.uri = pathEndPos < 0 ? request.url : request.url.substring(0, pathEndPos);
+        request.queryString = "";
+        if(request.requestLine.method() == HttpMethod.GET){
+            request.queryString = pathEndPos < 0 ? "" : request.url.substring(pathEndPos+1);
+        }
         request.protocol = request.requestLine.protocol();
         request.method = request.requestLine.method().text();
 
@@ -203,17 +216,52 @@ public class TinyHttpRequest implements HttpRequest {
             request.keepAlive = false;
         }else
             request.keepAlive = true;
-
+        request.parameters = parseQueryParameter(request.queryString);
+        request.cookies = parseCookie(request.firstHeader("Cookie").map(h->h.value()).orElse(""));
+        request.fileItems = parseFileItem(request);
+        return request;
     }
 
-    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, byte[] requestBody, SocketAddress remoteAddress){
+    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, byte[] requestBody, SocketAddress remoteAddress) throws IOException {
         TinyHttpRequest request = of(requestLine, requestHeader, remoteAddress);
         request.rawBody = requestBody;
+        request.queryString = "";
+        Optional<HttpHeader> headerList = request.firstHeader("Content-Type");
+        String contentType = headerList.map(h->h.value()).orElse("");
+        int i = contentType.indexOf(';');
+        String encoding = "UTF-8";
+        if(i > -1)
+            encoding = contentType.substring(i + 1);
+        if(request.requestLine.method() == HttpMethod.POST && headerList.isPresent() && headerList.get().value().startsWith("application/x-www-form-urlencoded")){
+            request.queryString = URLDecoder.decode(request.bodyToString(), encoding);
+        }
+        request.parameters = parseQueryParameter(request.queryString);
         return request;
     }
 
     private static Multimap<String, HttpQueryParameter> parseQueryParameter(String queryString){
+        List<String> strings = Splitter.on("&").omitEmptyStrings().splitToList(queryString);
+        Multimap<String, HttpQueryParameter> multimap = LinkedListMultimap.create();
+        strings.forEach(s->{
+            List<String> strings1 = Splitter.on("=").omitEmptyStrings().splitToList(s);
+            multimap.put(strings1.get(0),new HttpQueryParameter(strings1.get(0), strings1.get(1)));
+        });
+        return multimap;
+    }
 
+    private static Map<String, HttpCookie> parseCookie(String cookieString){
+        Map<String, HttpCookie> map = new HashMap<>();
+        Splitter.on("; ").trimResults().omitEmptyStrings().split(cookieString)
+                .forEach(s->{
+                    List<String> strings = Splitter.on('=').trimResults().omitEmptyStrings().splitToList(s);
+                    map.put(strings.get(0), new HttpCookie(strings.get(0), strings.get(1)));
+                });
+        return map;
+    }
+
+    private static Map<String, FileItem> parseFileItem(TinyHttpRequest request){
+        Map<String, FileItem> map = new HashMap<>();
+        return map;
     }
 
 
