@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.server.kit;
+package me.stevenkin.boomvc.server.stream;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -6,25 +6,15 @@ import java.util.Arrays;
 public class SearchableByteArrayOutputStream extends ByteArrayOutputStream {
 
     public int search(byte[] searchByte){
-        int i;
-        for(i = 0; i < count; i++){
-            int j;
-            for(j = 0; j < searchByte.length; j++){
-                if(buf[i+j] != searchByte[j])
-                    break;
-            }
-            if(j == searchByte.length)
-                return i;
-        }
-        return -1;
+        return search(searchByte, 0);
     }
 
     public int search(byte[] searchByte, int start){
         int i;
-        for(i = start; i < count; i++){
+        for(i = start; i <= count - searchByte.length; i++){
             int j;
             for(j = 0; j < searchByte.length; j++){
-                if(buf[i+j] != searchByte[j])
+                if(buf[i + j] != searchByte[j])
                     break;
             }
             if(j == searchByte.length)

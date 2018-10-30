@@ -4,7 +4,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import me.stevenkin.boomvc.http.*;
 import me.stevenkin.boomvc.server.exception.ProtocolParserException;
-import me.stevenkin.boomvc.server.kit.SearchableByteArrayOutputStream;
+import me.stevenkin.boomvc.server.stream.SearchableByteArrayOutputStream;
 import me.stevenkin.boomvc.server.parser.ProtocolParser;
 
 import java.io.ByteArrayOutputStream;

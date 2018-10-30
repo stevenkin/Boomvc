@@ -7,6 +7,7 @@ import me.stevenkin.boomvc.http.cookie.HttpCookie;
 import me.stevenkin.boomvc.http.multipart.FileItem;
 import me.stevenkin.boomvc.http.session.HttpSession;
 import me.stevenkin.boomvc.server.WebContext;
+import me.stevenkin.boomvc.server.exception.ProtocolParserException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -198,7 +199,7 @@ public class TinyHttpRequest implements HttpRequest {
     public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, SocketAddress remoteAddress){
         TinyHttpRequest request = new TinyHttpRequest();
         request.requestLine = requestLine;
-        request.headers = LinkedListMultimap.create(requestHeader);
+        request.headers =   ImmutableListMultimap.copyOf(requestHeader);
         request.remoteAddress = remoteAddress.toString();
 
         request.url = request.requestLine.url();
@@ -218,24 +219,33 @@ public class TinyHttpRequest implements HttpRequest {
             request.keepAlive = true;
         request.parameters = parseQueryParameter(request.queryString);
         request.cookies = parseCookie(request.firstHeader("Cookie").map(h->h.value()).orElse(""));
-        request.fileItems = parseFileItem(request);
         return request;
     }
 
-    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, byte[] requestBody, SocketAddress remoteAddress) throws IOException {
+    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, byte[] requestBody, SocketAddress remoteAddress) throws IOException, ProtocolParserException {
         TinyHttpRequest request = of(requestLine, requestHeader, remoteAddress);
         request.rawBody = requestBody;
         request.queryString = "";
         Optional<HttpHeader> headerList = request.firstHeader("Content-Type");
         String contentType = headerList.map(h->h.value()).orElse("");
-        int i = contentType.indexOf(';');
-        String encoding = "UTF-8";
-        if(i > -1)
-            encoding = contentType.substring(i + 1);
-        if(request.requestLine.method() == HttpMethod.POST && headerList.isPresent() && headerList.get().value().startsWith("application/x-www-form-urlencoded")){
-            request.queryString = URLDecoder.decode(request.bodyToString(), encoding);
+        int i = contentType.indexOf("; ");
+        if(request.method().equalsIgnoreCase("POST")){
+            if(contentType.startsWith("application/x-www-form-urlencoded")){
+                String encoding = "UTF-8";
+                if(i > -1)
+                    encoding = contentType.substring(i + 2);
+                request.queryString = URLDecoder.decode(request.bodyToString(), encoding);
+                request.parameters = parseQueryParameter(request.queryString);
+            }else if(contentType.startsWith("multipart/form-data")){
+                String boundary = "";
+                if(i < 0)
+                    throw new ProtocolParserException();
+                String boundaryStr = contentType.substring(i + 2);
+                List<String> list = Splitter.on('=').trimResults().omitEmptyStrings().splitToList(boundaryStr);
+                boundary = list.get(1);
+                request.fileItems = parseFileItem(request, boundary);
+            }
         }
-        request.parameters = parseQueryParameter(request.queryString);
         return request;
     }
 
@@ -259,8 +269,9 @@ public class TinyHttpRequest implements HttpRequest {
         return map;
     }
 
-    private static Map<String, FileItem> parseFileItem(TinyHttpRequest request){
+    private static Map<String, FileItem> parseFileItem(TinyHttpRequest request, String boundary){
         Map<String, FileItem> map = new HashMap<>();
+        byte[] body = request.rawBody;
         return map;
     }
 
