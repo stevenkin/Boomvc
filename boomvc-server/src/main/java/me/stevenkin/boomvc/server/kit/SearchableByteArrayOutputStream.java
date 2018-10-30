@@ -43,4 +43,11 @@ public class SearchableByteArrayOutputStream extends ByteArrayOutputStream {
         return Arrays.copyOfRange(buf, offset, limit);
     }
 
+    public void reset(int index){
+        if(index >= count)
+            throw new IllegalArgumentException();
+        System.arraycopy(buf, index, buf, 0, count-index);
+        count = count-index;
+    }
+
 }

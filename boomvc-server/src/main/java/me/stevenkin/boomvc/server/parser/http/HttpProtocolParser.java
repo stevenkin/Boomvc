@@ -78,6 +78,7 @@ public class HttpProtocolParser implements ProtocolParser {
 
     @Override
     public void parser() throws ProtocolParserException {
+        boolean goon = true;
         try {
             read();
         } catch (IOException e) {
@@ -85,114 +86,129 @@ public class HttpProtocolParser implements ProtocolParser {
             throw new ProtocolParserException("a io exception happened when readed data", e);
         }
         int index = -1;
-        switch(this.status){
-            case PARSINGLINE:
-                index = this.outputStream.search(LINEEND);
-                if(index > -1){
-                    this.line = this.outputStream.copy(this.offset, index);
-                    this.status = PARSINGHEADERS;
-                    this.offset = index+2;
-                    try {
-                        this.requestLine = parseHttpRequestLine(this.line);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                        throw new ProtocolParserException("url encode error", e);
-                    }
-                }
-                break;
-            case PARSINGHEADERS:
-                index = this.outputStream.search(HEADERSEND);
-                if(index > -1){
-                    this.headers = this.outputStream.copy(this.offset, index);
-                    this.status = PARSINGBODY;
-                    this.offset = index+4;
-                    try {
-                        this.requestHeaders = parseHttpRequestHeaders(this.headers);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                        throw new ProtocolParserException("url encode error", e);
-                    }
-                }
-                break;
-            case PARSINGBODY:
-                HttpMethod httpMethod = this.requestLine.method();
-                switch (httpMethod){
-                    case GET:
+        while(goon) {
+            goon = false;
+            switch (this.status) {
+                case PARSINGLINE:
+                    index = this.outputStream.search(LINEEND);
+                    if (index > -1) {
+                        this.line = this.outputStream.copy(this.offset, index);
+                        this.status = PARSINGHEADERS;
+                        this.offset = index + 2;
                         try {
-                            this.requestQueue.add(TinyHttpRequest.of(requestLine, requestHeaders, socketChannel.getRemoteAddress()));
-                        } catch (IOException e) {
+                            this.requestLine = parseHttpRequestLine(this.line);
+                        } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
-                            throw new ProtocolParserException(e);
+                            throw new ProtocolParserException("url encode error", e);
                         }
-                        clear();
-                        break;
-                    case POST:
-                        if(this.contentLength == -1){
-                            List<HttpHeader> headers = new ArrayList<>(this.requestHeaders.get("Content-Length"));
-                            if(headers != null && headers.size() > 0){
-                                this.contentLength = Integer.parseInt(headers.get(0).value());
+                    }
+                    break;
+                case PARSINGHEADERS:
+                    index = this.outputStream.search(HEADERSEND);
+                    if (index > -1) {
+                        this.headers = this.outputStream.copy(this.offset, index);
+                        this.status = PARSINGBODY;
+                        this.offset = index + 4;
+                        try {
+                            this.requestHeaders = parseHttpRequestHeaders(this.headers);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                            throw new ProtocolParserException("url encode error", e);
+                        }
+                    }
+                    break;
+                case PARSINGBODY:
+                    HttpMethod httpMethod = this.requestLine.method();
+                    switch (httpMethod) {
+                        case GET:
+                            try {
+                                this.requestQueue.add(TinyHttpRequest.of(requestLine, requestHeaders, socketChannel.getRemoteAddress()));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                 throw new ProtocolParserException(e);
                             }
-                        }
-                        if(this.contentLength == -1){
-                            if(!this.isChunked){
-                                List<HttpHeader> headers = new ArrayList<>(this.requestHeaders.get("Transfer-Encoding"));
-                                if(headers != null && headers.size() > 0 && headers.get(0).value().equalsIgnoreCase("chunked")){
-                                    this.isChunked = true;
-                                    this.status = PARSINGCHUNKEDLENGTH;
+                            clear();
+                            goon = true;
+                            break;
+                        case POST:
+                            if (this.contentLength == -1) {
+                                List<HttpHeader> headers = new ArrayList<>(this.requestHeaders.get("Content-Length"));
+                                if (headers != null && headers.size() > 0) {
+                                    this.contentLength = Integer.parseInt(headers.get(0).value());
                                 }
-                                if(!this.isChunked)
-                                    throw new ProtocolParserException();
                             }
-                        }
-                        if(this.contentLength > -1) {
-                            if (this.outputStream.count() - this.offset >= this.contentLength) {
-                                this.body = this.outputStream.copy(this.offset, this.offset + this.contentLength);
-                                try {
-                                    this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress()));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                    throw new ProtocolParserException(e);
-                                }
-                                clear();
-                                break;
-                            }
-                        }else{
-                            switch (this.status){
-                                case PARSINGCHUNKEDLENGTH:
-                                    int index1 = this.outputStream.search(LINEEND, this.offset);
-                                    if(index1 > -1){
-                                        this.chunkedLength = Integer.decode("0x" + new String(this.outputStream.copy(this.offset, index1), Charset.forName("ISO-8859-1")));
-                                        this.offset = index1 + 2;
-                                        this.status = PARSINGCHUNKEDBODY;
-                                        break;
-                                    }
-                                case PARSINGCHUNKEDBODY:
-                                    if(this.chunkedLength == 0){
-                                        this.body = this.bodyOutputStream.toByteArray();
-                                        try {
-                                            this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress()));
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                            throw new ProtocolParserException(e);
-                                        }
-                                        clear();
-                                        break;
-                                    }
-                                    int index2 = this.outputStream.search(LINEEND, this.offset);
-                                    byte[] chunkedBody = this.outputStream.copy(this.offset, index2);
-                                    if(chunkedBody.length != this.chunkedLength)
-                                        throw new ProtocolParserException();
-                                    try {
-                                        this.bodyOutputStream.write(chunkedBody);
-                                        this.offset = index2  + 2;
+                            if (this.contentLength == -1) {
+                                if (!this.isChunked) {
+                                    List<HttpHeader> headers = new ArrayList<>(this.requestHeaders.get("Transfer-Encoding"));
+                                    if (headers != null && headers.size() > 0 && headers.get(0).value().equalsIgnoreCase("chunked")) {
+                                        this.isChunked = true;
                                         this.status = PARSINGCHUNKEDLENGTH;
+                                    }
+                                    if (!this.isChunked)
+                                        throw new ProtocolParserException();
+                                }
+                            }
+                            if (this.contentLength > -1) {
+                                if (this.outputStream.count() - this.offset >= this.contentLength) {
+                                    this.body = this.outputStream.copy(this.offset, this.offset + this.contentLength);
+                                    this.offset = this.offset + this.contentLength;
+                                    try {
+                                        this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress()));
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                         throw new ProtocolParserException(e);
                                     }
+                                    clear();
+                                    goon = true;
+                                }
+                                break;
+                            } else {
+                                switch (this.status) {
+                                    case PARSINGCHUNKEDLENGTH:
+                                        int index1 = this.outputStream.search(LINEEND, this.offset);
+                                        if (index1 > -1) {
+                                            this.chunkedLength = Integer.decode("0x" + new String(this.outputStream.copy(this.offset, index1), Charset.forName("ISO-8859-1")));
+                                            this.offset = index1 + 2;
+                                            this.status = PARSINGCHUNKEDBODY;
+                                            goon = true;
+                                        }
+                                        break;
+                                    case PARSINGCHUNKEDBODY:
+                                        if (this.chunkedLength == 0) {
+                                            //TODO discard some data
+                                            this.body = this.bodyOutputStream.toByteArray();
+                                            try {
+                                                this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress()));
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                                throw new ProtocolParserException(e);
+                                            }
+                                            clear();
+                                            goon = true;
+                                            break;
+                                        }
+                                        int index2 = this.outputStream.search(LINEEND, this.offset);
+                                        if (index2 < 0)
+                                            break;
+                                        byte[] chunkedBody = this.outputStream.copy(this.offset, index2);
+                                        if (chunkedBody.length != this.chunkedLength)
+                                            throw new ProtocolParserException();
+                                        try {
+                                            this.bodyOutputStream.write(chunkedBody);
+                                            this.offset = index2 + 2;
+                                            this.status = PARSINGCHUNKEDLENGTH;
+                                            goon = true;
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                            throw new ProtocolParserException(e);
+                                        }
+                                        break;
+                                }
                             }
-                        }
-                }
+                            break;
+                    }
+                    break;
+            }
         }
 
     }
@@ -240,7 +256,7 @@ public class HttpProtocolParser implements ProtocolParser {
         this.headers = new byte[0];
         this.line = new byte[0];
         this.bodyOutputStream.reset();
-        this.outputStream.reset();
+        this.outputStream.reset(this.offset);
         this.buffer.clear();
         this.contentLength = -1;
         this.chunkedLength = -1;
