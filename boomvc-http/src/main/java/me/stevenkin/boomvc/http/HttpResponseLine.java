@@ -14,6 +14,9 @@ public class HttpResponseLine {
         this.reason = reason;
     }
 
+    public HttpResponseLine() {
+    }
+
     public String httpVersion() {
         return httpVersion;
     }
@@ -36,5 +39,10 @@ public class HttpResponseLine {
 
     public void reason(String reason) {
         this.reason = reason;
+    }
+
+    @Override
+    public String toString() {
+        return httpVersion + " " + Integer.toString(status) + " " + reason;
     }
 }

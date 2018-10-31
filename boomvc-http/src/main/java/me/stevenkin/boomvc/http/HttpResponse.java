@@ -33,33 +33,33 @@ public interface HttpResponse {
 
     HttpResponse removeCookie(String name);
 
-    void body(String body);
+    void body(String body) throws Exception;
 
-    default void text(String text){
+    default void text(String text) throws Exception{
         if (null == text) return;
         this.contentType("text/plain; charset=UTF-8");
         this.body(text);
     }
 
-    default void html(String html){
+    default void html(String html) throws Exception{
         if (null == html) return;
         this.contentType("text/html; charset=UTF-8");
         this.body(html);
     }
 
-    default void json(String json){
+    default void json(String json) throws Exception{
         if (null == json) return;
         this.contentType("application/json; charset=UTF-8");
         this.body(json);
     }
 
-    void download(String fileName, File file) throws Exception;
+    void download(File file) throws Exception;
 
-    OutputStream outputStream() throws IOException;
+    OutputStream outputStream()  throws Exception;
 
     void redirect(String newUri);
 
-    PrintWriter writer();
+    PrintWriter writer() throws Exception;
 
     byte[] rawByte();
 

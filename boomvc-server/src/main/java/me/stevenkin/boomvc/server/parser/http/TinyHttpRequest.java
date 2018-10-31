@@ -51,6 +51,7 @@ public class TinyHttpRequest implements HttpRequest {
 
     private byte[] rawBody;
 
+    private TinyHttpRequest(){}
 
     @Override
     public String uri() {
@@ -240,7 +241,7 @@ public class TinyHttpRequest implements HttpRequest {
                 request.queryString = URLDecoder.decode(request.bodyToString(), encoding);
                 request.parameters = parseQueryParameter(request.queryString);
             }else if(contentType.startsWith("multipart/form-data")){
-                String boundary = "";
+                String boundary;
                 if(i < 0)
                     throw new ProtocolParserException();
                 String boundaryStr = contentType.substring(i + 2);

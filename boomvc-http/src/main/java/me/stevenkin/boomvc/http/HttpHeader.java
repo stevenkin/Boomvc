@@ -19,5 +19,8 @@ public class HttpHeader {
         return value;
     }
 
-
+    @Override
+    public String toString() {
+        return name + ": " + value;
+    }
 }

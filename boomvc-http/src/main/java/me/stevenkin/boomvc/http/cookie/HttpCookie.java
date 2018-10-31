@@ -1,5 +1,10 @@
 package me.stevenkin.boomvc.http.cookie;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class HttpCookie {
 
     private String  name     = null;
@@ -79,5 +84,22 @@ public class HttpCookie {
 
     public void httpOnly(boolean httpOnly) {
         this.httpOnly = httpOnly;
+    }
+
+    public String setCookieString(){
+        DateFormat formater = new SimpleDateFormat(
+                "Wdy, DD-Mon-YYYY HH:MM:SS GMT", Locale.US);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(this.name).append("=").append(this.value).append("; ");
+        if(this.domain != null)
+            stringBuilder.append("domain=").append(this.domain).append("; ");
+        if(this.maxAge > 0)
+            stringBuilder.append("expires=").append(formater.format(new Date(new Date().getTime() + this.maxAge))).append("; ");
+        stringBuilder.append("path=").append(this.path).append("; ");
+        if(this.secure)
+            stringBuilder.append("secure; ");
+        if(this.httpOnly)
+            stringBuilder.append("HttpOnly");
+        return stringBuilder.toString();
     }
 }

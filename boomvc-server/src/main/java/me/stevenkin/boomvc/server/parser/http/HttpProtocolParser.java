@@ -95,6 +95,7 @@ public class HttpProtocolParser implements ProtocolParser {
                         this.line = this.outputStream.copy(this.offset, index);
                         this.status = PARSINGHEADERS;
                         this.offset = index + 2;
+                        goon = true;
                         try {
                             this.requestLine = parseHttpRequestLine(this.line);
                         } catch (UnsupportedEncodingException e) {
@@ -109,6 +110,7 @@ public class HttpProtocolParser implements ProtocolParser {
                         this.headers = this.outputStream.copy(this.offset, index);
                         this.status = PARSINGBODY;
                         this.offset = index + 4;
+                        goon = true;
                         try {
                             this.requestHeaders = parseHttpRequestHeaders(this.headers);
                         } catch (UnsupportedEncodingException e) {
