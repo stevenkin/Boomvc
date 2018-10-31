@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.server.parser.http;
+package me.stevenkin.boomvc.server.http;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -146,7 +146,7 @@ public class TinyHttpResponse implements HttpResponse {
 
     @Override
     public void redirect(String newUri) {
-        headers.put(HttpConst.LOCATION, newUri);
+        headers.put(HttpConst.LOCATION, new HttpHeader(HttpConst.LOCATION, newUri));
         this.status(302);
         try {
             outputStream();

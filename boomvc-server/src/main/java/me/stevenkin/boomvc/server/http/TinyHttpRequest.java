@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.server.parser.http;
+package me.stevenkin.boomvc.server.http;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.*;
