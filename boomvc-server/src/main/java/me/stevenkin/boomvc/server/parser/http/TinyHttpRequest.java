@@ -4,16 +4,19 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.*;
 import me.stevenkin.boomvc.http.*;
 import me.stevenkin.boomvc.http.cookie.HttpCookie;
+import me.stevenkin.boomvc.http.multipart.FileInfo;
 import me.stevenkin.boomvc.http.multipart.FileItem;
 import me.stevenkin.boomvc.http.session.HttpSession;
 import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.exception.ProtocolParserException;
+import me.stevenkin.boomvc.server.stream.LineByteArrayInputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketAddress;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.*;
 
 public class TinyHttpRequest implements HttpRequest {
@@ -272,7 +275,85 @@ public class TinyHttpRequest implements HttpRequest {
     private static Map<String, FileItem> parseFileItem(TinyHttpRequest request, String boundary){
         Map<String, FileItem> map = new HashMap<>();
         byte[] body = request.rawBody;
+        byte[] bytes = boundary.getBytes(Charset.forName("ISO-8859-1"));
+        byte[] boundaryLine = new byte[bytes.length + 2];
+        boundaryLine[0] = '-';
+        boundaryLine[1] = '-';
+        System.arraycopy(bytes, 0, boundaryLine, 2, bytes.length);
+        byte[] endLine = new byte[boundaryLine.length + 2];
+        System.arraycopy(boundaryLine, 0, endLine, 2, boundaryLine.length);
+        endLine[endLine.length - 2] = '-';
+        endLine[endLine.length - 1] = '-';
+
+
+        LineByteArrayInputStream inputStream = new LineByteArrayInputStream(body);
+        byte[] bounLine = inputStream.readLineBytes();
+        byte[] line;
+        while(byteArrayEquals(bounLine, boundaryLine)){
+            StringBuilder stringBuilder = new StringBuilder();
+            while((line=inputStream.readLineBytes()).length > 0){
+                stringBuilder.append(new String(line, Charset.forName("ISO-8859-1"))).append("\r\n");
+            }
+            byte[] fileBody = inputStream.readLineBytes();
+            FileInfo fileInfo = parseFileInfo(stringBuilder.toString(), fileBody.length);
+            map.put(fileInfo.getFileName(), parseFileItem(fileBody, fileInfo));
+            bounLine = inputStream.readLineBytes();
+        }
         return map;
+    }
+
+    private static boolean byteArrayEquals(byte[] bytes1, byte[] bytes2){
+        if(bytes1 == bytes2)
+            return true;
+        if(bytes1 == null || bytes2 == null)
+            return false;
+        if(bytes1.length != bytes2.length)
+            return false;
+        int length = bytes1.length;
+        for(int i = 0; i < length; i++){
+            if(bytes1[i] != bytes2[i])
+                return false;
+        }
+        return true;
+    }
+
+    private static FileItem parseFileItem(byte[] body, FileInfo fileInfo){
+        return new FileItem(fileInfo.getName(), fileInfo.getFileName(), fileInfo.getContentType(), fileInfo.getLength(), body);
+    }
+
+    private static FileInfo parseFileInfo(String  fileInfo, long length){
+        List<String> list = Splitter.on("\r\n").trimResults().omitEmptyStrings().splitToList(fileInfo);
+        String disposition = null;
+        String contentType = null;
+        for(String string : list){
+            if(string.startsWith("Content-Disposition: ")){
+                disposition = string;
+            }
+            if(string.startsWith("Content-Type: ")){
+                contentType = string;
+            }
+        }
+        String subDisposition = "";
+        String subContentType = null;
+        String name = null;
+        String fileName = null;
+        if(disposition != null)
+            subDisposition = disposition.substring("Content-Disposition: ".length());
+        if(contentType != null)
+            subContentType = contentType.substring("Content-Type: ".length());
+        List<String> list1 = Splitter.on("; ").trimResults().omitEmptyStrings().splitToList(subDisposition);
+        if(list1.size() > 0){
+            List<String> list2 = Splitter.on('=').trimResults().omitEmptyStrings().splitToList(list1.get(1));
+            if(list2.size() == 2)
+                name = list2.get(1);
+            if(list1.size() > 2){
+                List<String> list3 = Splitter.on('=').trimResults().omitEmptyStrings().splitToList(list1.get(2));
+                if(list3.size() == 2)
+                    fileName = list3.get(1);
+            }
+        }
+        return new FileInfo(name, fileName, subContentType, length);
+
     }
 
 
