@@ -13,6 +13,7 @@ import me.stevenkin.boomvc.server.exception.NotFoundException;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class TinyHttpResponse implements HttpResponse {
 
     private ByteArrayOutputStream rawOutputStream;
 
-    private byte[] rawBody;
+    private ByteArrayOutputStream rawBodyOutputStream;
 
     private boolean isSetBody = false;
 
@@ -112,23 +113,45 @@ public class TinyHttpResponse implements HttpResponse {
 
     @Override
     public void body(String body) throws Exception{
-        this.rawBody = body.getBytes(Charset.forName("UTF-8"));
-        outputStream().write(this.rawBody);
+        if (this.isSetBody)
+            throw new UnsupportedOperationException("already set body !");
+        this.rawBodyOutputStream.write(body.getBytes(Charset.forName("UTF-8")));
     }
 
     @Override
     public void download(File file) throws Exception {
+        if (this.isSetBody)
+            throw new UnsupportedOperationException("already set body !");
         if (!file.exists() || !file.isFile()) {
             throw new NotFoundException("Not found file: " + file.getPath());
         }
         String contentType = StringKit.mimeType(file.getName());
         headers.put(HttpConst.CONTENT_LENGTH, new HttpHeader(HttpConst.CONTENT_LENGTH, String.valueOf(file.length())));
         headers.put(HttpConst.CONTENT_TYPE_STRING, new HttpHeader(HttpConst.CONTENT_TYPE_STRING, contentType));
-        copyStream(new FileInputStream(file), outputStream());
+        this.rawBodyOutputStream.write(Files.readAllBytes(file.toPath()));
     }
 
     @Override
-    public OutputStream outputStream() throws Exception{
+    public OutputStream outputStream(){
+        if (this.isSetBody)
+            throw new UnsupportedOperationException("already set body !");
+        return this.rawOutputStream;
+    }
+
+    @Override
+    public void redirect(String newUri) {
+        if (this.isSetBody)
+            throw new UnsupportedOperationException("already set body !");
+        headers.put(HttpConst.LOCATION, new HttpHeader(HttpConst.LOCATION, newUri));
+        this.status(302);
+    }
+
+    @Override
+    public PrintWriter writer(){
+        return new PrintWriter(outputStream());
+    }
+
+    public void flush() throws Exception {
         String responseLine = URLEncoder.encode(this.responseLine.toString(), "UTF-8");
         StringBuilder stringBuilder = new StringBuilder(responseLine).append("\r\n");
         this.headers.values().stream().forEach(h->{
@@ -140,38 +163,13 @@ public class TinyHttpResponse implements HttpResponse {
         });
         stringBuilder.append("\r\n");
         this.rawOutputStream.write(stringBuilder.toString().getBytes(Charset.forName("ISO-8859-1")));
+        this.rawOutputStream.write(this.rawBodyOutputStream.toByteArray());
         this.isSetBody = true;
-        return this.rawOutputStream;
-    }
-
-    @Override
-    public void redirect(String newUri) {
-        headers.put(HttpConst.LOCATION, new HttpHeader(HttpConst.LOCATION, newUri));
-        this.status(302);
-        try {
-            outputStream();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public PrintWriter writer() throws Exception{
-        return new PrintWriter(outputStream());
     }
 
     @Override
     public byte[] rawByte() {
         return this.rawOutputStream.toByteArray();
-    }
-
-    private static void copyStream(InputStream ips,OutputStream ops) throws Exception {
-        byte[] buf = new byte[1024];
-        int len = ips.read(buf);
-        while(len != -1) {
-            ops.write(buf,0,len);
-            len = ips.read(buf);
-        }
     }
 
 

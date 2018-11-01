@@ -55,13 +55,15 @@ public interface HttpResponse {
 
     void download(File file) throws Exception;
 
-    OutputStream outputStream()  throws Exception;
+    OutputStream outputStream();
 
     void redirect(String newUri);
 
-    PrintWriter writer() throws Exception;
+    PrintWriter writer();
 
     byte[] rawByte();
+
+    void flush() throws Exception;
 
 
 
