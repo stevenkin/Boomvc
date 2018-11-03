@@ -2,10 +2,7 @@ package me.stevenkin.boomvc.server.http;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
-import me.stevenkin.boomvc.http.HttpConst;
-import me.stevenkin.boomvc.http.HttpHeader;
-import me.stevenkin.boomvc.http.HttpResponse;
-import me.stevenkin.boomvc.http.HttpResponseLine;
+import me.stevenkin.boomvc.http.*;
 import me.stevenkin.boomvc.http.cookie.HttpCookie;
 import me.stevenkin.boomvc.http.kit.StringKit;
 import me.stevenkin.boomvc.server.exception.NotFoundException;
@@ -36,15 +33,31 @@ public class TinyHttpResponse implements HttpResponse {
         this.headers = LinkedListMultimap.create();
         this.cookies = new HashMap<>();
         this.rawOutputStream = new ByteArrayOutputStream();
+        this.rawBodyOutputStream = new ByteArrayOutputStream();
+
     }
 
     @Override
     public HttpResponse status(int status) {
-        if (this.isSetBody)
-            throw new UnsupportedOperationException("already set body !");
+        if (this.isSetBody) throw new UnsupportedOperationException("already set body !");
         this.responseLine.status(status);
         return this;
     }
+
+    @Override
+    public HttpResponse version(String version) {
+        if (this.isSetBody) throw new UnsupportedOperationException("already set body !");
+        this.responseLine.httpVersion(version);
+        return this;
+    }
+
+    @Override
+    public HttpResponse reason(String reason) {
+        if (this.isSetBody) throw new UnsupportedOperationException("already set body !");
+        this.responseLine.reason(reason);
+        return this;
+    }
+
 
     @Override
     public HttpResponse header(String name, String value) {
@@ -152,18 +165,16 @@ public class TinyHttpResponse implements HttpResponse {
     }
 
     public void flush() throws Exception {
-        String responseLine = URLEncoder.encode(this.responseLine.toString(), "UTF-8");
+        String responseLine = this.responseLine.toString();
         StringBuilder stringBuilder = new StringBuilder(responseLine).append("\r\n");
-        this.headers.values().stream().forEach(h->{
-            try {
-                stringBuilder.append(URLEncoder.encode(h.toString(), "UTF-8")).append("\r\n");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        });
+        byte[] body = this.rawBodyOutputStream.toByteArray();
+        header("Content-Length", Integer.toString(body.length));
+        this.headers.values().stream().forEach(h->
+                stringBuilder.append(h.toString()).append("\r\n")
+        );
         stringBuilder.append("\r\n");
         this.rawOutputStream.write(stringBuilder.toString().getBytes(Charset.forName("ISO-8859-1")));
-        this.rawOutputStream.write(this.rawBodyOutputStream.toByteArray());
+        this.rawOutputStream.write(body);
         this.isSetBody = true;
     }
 

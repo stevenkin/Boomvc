@@ -34,7 +34,7 @@ public class SearchableByteArrayOutputStream extends ByteArrayOutputStream {
     }
 
     public void reset(int index){
-        if(index >= count)
+        if(index > count)
             throw new IllegalArgumentException();
         System.arraycopy(buf, index, buf, 0, count-index);
         count = count-index;

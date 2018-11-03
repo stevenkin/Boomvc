@@ -13,6 +13,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.concurrent.Semaphore;
 
 public class EventLoop implements Runnable, Task {
 
@@ -24,21 +25,32 @@ public class EventLoop implements Runnable, Task {
 
     private volatile boolean isStart = false;
 
-    public EventLoop(Selector selector, EventExecutorGroup childGroup, MvcDispatcher dispatcher) {
+    private Semaphore semaphore;
+
+    public EventLoop(Selector selector, EventExecutorGroup childGroup, MvcDispatcher dispatcher, Semaphore semaphore) {
         this.selector = selector;
         this.childGroup = childGroup;
         this.dispatcher = dispatcher;
+        this.semaphore = semaphore;
     }
 
     @Override
     public void run() {
         while(this.isStart){
             try {
-                int n = selector.select();
+                int n = -1;
+                try {
+                    n = selector.select();
+                    semaphore.acquire();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    semaphore.release();
+                }
                 if(n<=0)
                     continue;
             } catch (IOException e) {
-                System.err.println(e);
+                e.printStackTrace();
                 continue;
             }
             Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
@@ -62,8 +74,10 @@ public class EventLoop implements Runnable, Task {
                         try {
                             key.channel().close();
                         } catch (IOException e1) {
+                            e1.printStackTrace();
                         }
                     }
+                    e.printStackTrace();
                 }
             }
         }
@@ -72,7 +86,8 @@ public class EventLoop implements Runnable, Task {
     private void accept(SelectionKey key) throws IOException {
         ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
         SocketChannel socketChannel = serverSocketChannel.accept();
-        this.childGroup.register(socketChannel, SelectionKey.OP_READ, new HttpProtocolParser(key));
+        socketChannel.configureBlocking(false);
+        this.childGroup.register(socketChannel, SelectionKey.OP_READ, new HttpProtocolParser(socketChannel));
     }
 
     private void read(SelectionKey key) throws Exception{
@@ -83,28 +98,34 @@ public class EventLoop implements Runnable, Task {
         if(httpProtocolParser.parsed()){
             request = httpProtocolParser.takeHttpRequest();
             response = httpProtocolParser.genHttpResponse();
-            this.dispatcher.dispatcher(request, response);
+            //TODO this.dispatcher.dispatcher(request, response);
+            response.status(200)
+                    .body("hello boomvc");
+            response.flush();
             httpProtocolParser.putHttpResponse(response);
-            if(httpProtocolParser.isClosed())
+            key.interestOps(SelectionKey.OP_WRITE);
+            /*if(httpProtocolParser.isClosed())
                 key.interestOps(SelectionKey.OP_WRITE);
             else
-                key.interestOps(SelectionKey.OP_READ|SelectionKey.OP_WRITE);
+                key.interestOps(SelectionKey.OP_READ|SelectionKey.OP_WRITE);*/
         }
     }
 
     private void write(SelectionKey key) throws IOException {
         ByteBuffer buffer;
         HttpProtocolParser httpProtocolParser = (HttpProtocolParser) key.attachment();
+        SocketChannel socketChannel = (SocketChannel) key.channel();
         do{
             buffer = httpProtocolParser.takeHttpResponseBuffer();
             if(buffer == null){
                 if(httpProtocolParser.isClosed())
-                    key.channel().close();
+                    key.cancel();
                 else
                     key.interestOps(SelectionKey.OP_READ);
                 break;
             }
-            ((SocketChannel)key.channel()).write(buffer);
+            int count = socketChannel.write(buffer);
+            System.out.println("write count = "+count);
         } while(!buffer.hasRemaining());
         if(buffer != null)
             httpProtocolParser.putResponseBuffer(buffer);
@@ -118,5 +139,9 @@ public class EventLoop implements Runnable, Task {
     @Override
     public void stop() {
         this.isStart = false;
+    }
+
+    public Semaphore semaphore(){
+        return this.semaphore;
     }
 }

@@ -10,6 +10,11 @@ import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.kit.NameThreadFactory;
 import me.stevenkin.boomvc.server.task.Task;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.ServerSocketChannel;
+
 import static me.stevenkin.boomvc.http.Const.*;
 
 
@@ -44,6 +49,18 @@ public class TinyServer implements Server {
                 new NameThreadFactory("@boss"),
                 this.workers,
                 null);
+        ServerSocketChannel serverSocketChannel;
+        try {
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.configureBlocking(false);
+            serverSocketChannel.bind(new InetSocketAddress(this.environment.getValue(ENV_KEY_SERVER_ADDRESS, DEFAULT_SERVER_ADDRESS),
+                    Integer.parseInt(this.environment.getValue(ENV_KEY_SERVER_PORT, DEFAULT_SERVER_PORT))));
+            this.boss.register(serverSocketChannel, SelectionKey.OP_ACCEPT);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
         WebContext.init(this.environment.getValue(ENV_KEY_CONTEXT_PATH, "/"));
     }
 

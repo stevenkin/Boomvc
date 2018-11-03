@@ -19,7 +19,7 @@ import java.util.List;
 
 public interface Const {
 
-    int DEFAULT_SERVER_PORT = 9000;
+    String DEFAULT_SERVER_PORT = "9000";
     String DEFAULT_SERVER_ADDRESS = "0.0.0.0";
     String LOCAL_IP_ADDRESS = "127.0.0.1";
     String CONTENT_TYPE_HTML = "text/html; charset=UTF-8";
@@ -62,7 +62,8 @@ public interface Const {
 
     int DEFAULT_SO_BACKLOG = 1024;
     int DEFAULT_ACCEPT_THREAD_COUNT = 1;
-    int DEFAULT_IO_THREAD_COUNT = Runtime.getRuntime().availableProcessors();
+    int DEFAULT_IO_THREAD_COUNT = 1;
+    //int DEFAULT_IO_THREAD_COUNT = Runtime.getRuntime().availableProcessors();
 
     String NEW_LINE = "\r\n";
 

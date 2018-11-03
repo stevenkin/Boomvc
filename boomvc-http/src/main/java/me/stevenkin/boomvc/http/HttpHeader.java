@@ -1,5 +1,8 @@
 package me.stevenkin.boomvc.http;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class HttpHeader {
 
     private final String name;
@@ -21,6 +24,11 @@ public class HttpHeader {
 
     @Override
     public String toString() {
-        return name + ": " + value;
+        try {
+            return name + ": " + URLEncoder.encode(value, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

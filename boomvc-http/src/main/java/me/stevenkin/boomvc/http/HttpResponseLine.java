@@ -15,6 +15,9 @@ public class HttpResponseLine {
     }
 
     public HttpResponseLine() {
+        this.httpVersion = "HTTP/1.1";
+        this.status = 200;
+        this.reason = "OK";
     }
 
     public String httpVersion() {

@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -26,8 +25,6 @@ public class HttpProtocolParser implements ProtocolParser {
     private static final byte[] LINEEND = {13, 10};
 
     private static final byte[] HEADERSEND = { 13, 10, 13, 10 };
-
-    private SelectionKey key;
 
     private SocketChannel socketChannel;
 
@@ -65,9 +62,8 @@ public class HttpProtocolParser implements ProtocolParser {
 
     private boolean isClosed = false;
 
-    public HttpProtocolParser(SelectionKey key) {
-        this.key = key;
-        this.socketChannel = (SocketChannel) key.channel();
+    public HttpProtocolParser(SocketChannel socketChannel) {
+        this.socketChannel = socketChannel;
         this.responseBuffers = new LinkedList<>();
         this.requestQueue = new LinkedList<>();
         this.outputStream = new SearchableByteArrayOutputStream();
@@ -88,7 +84,7 @@ public class HttpProtocolParser implements ProtocolParser {
             throw new ProtocolParserException("a io exception happened when readed data", e);
         }
         int index = -1;
-        while(goon) {
+        while(goon && !this.isClosed) {
             goon = false;
             switch (this.status) {
                 case PARSINGLINE:
@@ -179,7 +175,8 @@ public class HttpProtocolParser implements ProtocolParser {
                                         break;
                                     case PARSINGCHUNKEDBODY:
                                         if (this.chunkedLength == 0) {
-                                            //TODO discard some data
+                                            //discard some data
+                                            this.offset = this.outputStream.count();
                                             this.body = this.bodyOutputStream.toByteArray();
                                             try {
                                                 this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress()));
@@ -219,10 +216,12 @@ public class HttpProtocolParser implements ProtocolParser {
 
     private void read() throws IOException {
         int count;
-        SocketChannel channel = (SocketChannel) (key.channel());
+        SocketChannel channel = this.socketChannel;
         do{
             buffer.clear();
             count = channel.read(this.buffer);
+            if(count < 0)
+                channel.close();
             if(count > 0){
                 this.outputStream.write(this.buffer.array(), 0, count);
             }
@@ -243,7 +242,7 @@ public class HttpProtocolParser implements ProtocolParser {
         String[] strings = headersStr.split("\r\n");
         Multimap<String, HttpHeader> headers = LinkedListMultimap.create();
         Arrays.asList(strings).forEach(s->{
-            String[] strings1 = s.split(":");
+            String[] strings1 = s.split(": ");
             headers.put(strings1[0], new HttpHeader(strings1[0], strings1[1]));
         });
         return headers;
@@ -251,7 +250,9 @@ public class HttpProtocolParser implements ProtocolParser {
 
     private void clear(){
         List<HttpHeader> headers = new ArrayList<>(this.requestHeaders.get("Connection"));
-        if(headers.size() == 1 && headers.get(0).value().equalsIgnoreCase("close")){
+        String s = headers.get(0).value();
+        boolean b = s.equalsIgnoreCase("close");
+        if(headers.size() == 1 && s.equalsIgnoreCase("close")){
             this.isClosed = true;
             return ;
         }
@@ -276,7 +277,7 @@ public class HttpProtocolParser implements ProtocolParser {
     }
 
     public HttpRequest takeHttpRequest(){
-        if(this.requestQueue.isEmpty())
+        if(!this.requestQueue.isEmpty())
             return this.requestQueue.poll();
         return null;
     }

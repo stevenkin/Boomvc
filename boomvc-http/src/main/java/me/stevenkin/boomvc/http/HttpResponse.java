@@ -9,6 +9,10 @@ public interface HttpResponse {
 
     HttpResponse status(int status);
 
+    HttpResponse version(String version);
+
+    HttpResponse reason(String reason);
+
     default HttpResponse contentType(String contentType){
         header("Content-Type",contentType);
         return this;

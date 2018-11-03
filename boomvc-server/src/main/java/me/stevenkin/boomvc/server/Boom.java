@@ -35,6 +35,8 @@ public class Boom {
 
     private String bannerText;
 
+    private Boom() {
+    }
 
     public static Boom me(){
         return of();
@@ -120,13 +122,8 @@ public class Boom {
     }
 
     public void start(Class<?> mainCls, String... args) {
-        start(mainCls, DEFAULT_SERVER_ADDRESS, DEFAULT_SERVER_PORT, args);
-    }
-
-    public void start(Class<?> bootClass, String address, int port, String... args) {
-        this.bootClass = bootClass;
+        this.bootClass = mainCls;
         addPackages(bootClass.getPackage().getName());
-        listen(address, port);
         initEnv(args);
         initBanner();
         this.ioc = IocFactory.buildIoc(Arrays.asList(this.environment.getValue(ENV_KEY_IOC_PACKAGES).split(",")), this.environment);
