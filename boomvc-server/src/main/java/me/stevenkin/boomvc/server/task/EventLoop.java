@@ -3,8 +3,10 @@ package me.stevenkin.boomvc.server.task;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.mvc.MvcDispatcher;
+import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.parser.http.HttpProtocolParser;
+import me.stevenkin.boomvc.server.session.SessionManager;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,6 +18,8 @@ import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 
 public class EventLoop implements Runnable, Task {
+
+    private static final SessionManager SESSION_MANAGER   = WebContext.sessionManager();
 
     private Selector selector;
 
@@ -97,7 +101,10 @@ public class EventLoop implements Runnable, Task {
         HttpResponse response;
         if(httpProtocolParser.parsed()){
             request = httpProtocolParser.takeHttpRequest();
+            String id = SESSION_MANAGER.createSession(request);
             response = httpProtocolParser.genHttpResponse();
+            if(id != null)
+                response.cookie(SessionManager.SESSION_KEY, id);
             //TODO this.dispatcher.dispatcher(request, response);
             response.status(200)
                     .body("hello boomvc");

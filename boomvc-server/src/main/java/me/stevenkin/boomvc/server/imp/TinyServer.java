@@ -8,6 +8,7 @@ import me.stevenkin.boomvc.server.Server;
 import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.kit.NameThreadFactory;
+import me.stevenkin.boomvc.server.session.SessionCleaner;
 import me.stevenkin.boomvc.server.task.Task;
 
 import java.io.IOException;
@@ -31,6 +32,8 @@ public class TinyServer implements Server {
     private EventExecutorGroup boss;
 
     private EventExecutorGroup workers;
+
+    private Thread cleanSession;
 
 
     @Override
@@ -61,13 +64,15 @@ public class TinyServer implements Server {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        WebContext.init(this.environment.getValue(ENV_KEY_CONTEXT_PATH, "/"));
+        WebContext.init(boom, this.environment.getValue(ENV_KEY_CONTEXT_PATH, "/"));
+        this.cleanSession = new Thread(new SessionCleaner(WebContext.sessionManager()));
     }
 
     @Override
     public void start() {
         this.boss.start();
         this.workers.start();
+        this.cleanSession.start();
     }
 
     @Override

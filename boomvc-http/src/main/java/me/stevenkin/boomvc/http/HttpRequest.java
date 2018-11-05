@@ -72,6 +72,8 @@ public interface HttpRequest {
 
     HttpSession session();
 
+    HttpRequest session(HttpSession session);
+
     List<HttpCookie> cookies();
 
     default Optional<String> cookieValue(String name){

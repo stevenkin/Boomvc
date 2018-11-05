@@ -4,11 +4,13 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.*;
 import me.stevenkin.boomvc.http.*;
 import me.stevenkin.boomvc.http.cookie.HttpCookie;
+import me.stevenkin.boomvc.http.kit.PathKit;
 import me.stevenkin.boomvc.http.multipart.FileInfo;
 import me.stevenkin.boomvc.http.multipart.FileItem;
 import me.stevenkin.boomvc.http.session.HttpSession;
 import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.exception.ProtocolParserException;
+import me.stevenkin.boomvc.server.session.SessionManager;
 import me.stevenkin.boomvc.server.stream.LineByteArrayInputStream;
 
 import java.io.ByteArrayInputStream;
@@ -101,7 +103,13 @@ public class TinyHttpRequest implements HttpRequest {
 
     @Override
     public HttpSession session() {
-        return null;
+        return this.session;
+    }
+
+    @Override
+    public HttpRequest session(HttpSession session) {
+        this.session = session;
+        return this;
     }
 
     @Override
@@ -223,6 +231,13 @@ public class TinyHttpRequest implements HttpRequest {
             request.keepAlive = true;
         request.parameters = parseQueryParameter(request.queryString);
         request.cookies = parseCookie(request.firstHeader("Cookie").map(h->h.value()).orElse(""));
+
+        String cleanUri = request.uri;
+        if (!"/".equals(request.contextPath())) {
+            cleanUri = PathKit.cleanPath(cleanUri.replaceFirst(request.contextPath(), "/"));
+            request.uri = cleanUri;
+        }
+
         return request;
     }
 

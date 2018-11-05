@@ -4,6 +4,7 @@ import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.ioc.IocFactory;
 import me.stevenkin.boomvc.server.imp.TinyServer;
+import me.stevenkin.boomvc.server.session.SessionManager;
 
 import java.io.*;
 import java.net.URL;
@@ -34,6 +35,8 @@ public class Boom {
     private Class<?> bootClass;
 
     private String bannerText;
+
+    private SessionManager sessionManager = new SessionManager();
 
     private Boom() {
     }
@@ -137,6 +140,10 @@ public class Boom {
         return this;
     }
 
+    public SessionManager sessionManager(){
+        return this.sessionManager;
+    }
+
     private void initBanner(){
         String bannerPath = this.environment.getValue(ENV_KEY_BANNER_PATH, DEFAULT_BANNER_PATH);
         this.bannerText = BANNER_TEXT;
@@ -182,13 +189,4 @@ public class Boom {
         return argsMap;
     }
 
-
-
-
-
-
-
-
-
-
-    }
+}
