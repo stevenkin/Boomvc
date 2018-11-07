@@ -13,7 +13,7 @@ public class FilterConfig {
 
     private String filterPathPattern;
 
-    private int order;
+    private int order = Integer.MAX_VALUE;
 
     public FilterConfig() {
     }

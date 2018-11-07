@@ -78,8 +78,9 @@ public class SimpleIoc implements Ioc {
     public void setBean(Object bean) {
         Bean bean1 = (Bean) Annotations.annotationOfType(bean.getClass(), Bean.class, new HashSet<>());
         if(bean1==null)
-            throw new IllegalStateException("bean is error");
-        this.setBean(bean1.value(),bean);
+            this.setBean("", bean);
+        else
+            this.setBean(bean1.value(),bean);
     }
 
     @Override

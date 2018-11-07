@@ -34,7 +34,7 @@ public class MvcFilterMapping implements FilterMapping {
     public FilterChain mappingFilters(HttpRequest request) {
         List<FilterMappingInfo> mappedFilters = this.registeredFilters.stream()
                 .filter(filter->patternThreadLocal.get().match(filter.filterConfig().filterPathPattern(), request.uri()))
-                .sorted(Comparator.comparing(f->f.filterConfig().order()))
+                .sorted(Comparator.comparing((FilterMappingInfo f)->f.filterConfig().order()).reversed())
                 .collect(Collectors.toList());
         FilterChain filterChain = new MvcFilterChain();
         mappedFilters.forEach(f->filterChain.addFilter(f.filter()));
