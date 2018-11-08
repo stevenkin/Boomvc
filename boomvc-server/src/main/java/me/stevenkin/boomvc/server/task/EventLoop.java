@@ -3,6 +3,9 @@ package me.stevenkin.boomvc.server.task;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.mvc.MvcDispatcher;
+import me.stevenkin.boomvc.mvc.filter.FilterChain;
+import me.stevenkin.boomvc.mvc.filter.FilterRegisterBean;
+import me.stevenkin.boomvc.mvc.filter.imp.MvcFilterChain;
 import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.parser.http.HttpProtocolParser;
@@ -15,6 +18,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class EventLoop implements Runnable, Task {
@@ -26,6 +30,8 @@ public class EventLoop implements Runnable, Task {
     private EventExecutorGroup childGroup;
 
     private MvcDispatcher dispatcher;
+
+    private FilterChain filterChain;
 
     private volatile boolean isStart = false;
 
@@ -105,7 +111,11 @@ public class EventLoop implements Runnable, Task {
             response = httpProtocolParser.genHttpResponse();
             if(id != null)
                 response.cookie(SessionManager.SESSION_KEY, id);
-            //TODO this.dispatcher.dispatcher(request, response);
+            List<FilterRegisterBean> filterRegisterBeans = WebContext.ioc().getBeans(FilterRegisterBean.class);
+            this.filterChain = new MvcFilterChain();
+            this.filterChain.dispatcher(this.dispatcher);
+            filterRegisterBeans.forEach(f->this.filterChain.addFilter(f.filter()));
+            this.filterChain.doFilter(request, response);
             response.status(200)
                     .body("hello boomvc");
             response.flush();
@@ -146,6 +156,7 @@ public class EventLoop implements Runnable, Task {
     @Override
     public void stop() {
         this.isStart = false;
+        this.filterChain.destroy();
     }
 
     public Semaphore semaphore(){

@@ -12,4 +12,6 @@ public interface FilterChain {
 
     FilterChain dispatcher(MvcDispatcher dispatcher);
 
+    void destroy();
+
 }

@@ -39,4 +39,10 @@ public class MvcFilterChain implements FilterChain {
         this.dispatcher = dispatcher;
         return this;
     }
+
+    @Override
+    public void destroy() {
+        this.filters.forEach(f->f.destroy());
+        this.dispatcher.destroy();
+    }
 }

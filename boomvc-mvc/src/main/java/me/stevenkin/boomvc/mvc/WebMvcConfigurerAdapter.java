@@ -19,9 +19,10 @@ public abstract class WebMvcConfigurerAdapter implements WebMvcConfigurer, BeanP
         addInterceptors(registry);
         List<FilterRegisterBean> filterRegisterBeans = registry.filterRegisterBeans();
         List<InterceptorRegisterBean> interceptorRegisterBeans = registry.interceptorRegisterBeans();
-        IntStream.of(filterRegisterBeans.size()).forEach(i->
-            ioc.addBean("FilterRegisterBean$"+i, filterRegisterBeans.get(i))
-        );
+        IntStream.of(filterRegisterBeans.size()).forEach(i-> {
+            filterRegisterBeans.get(i).filter().init(filterRegisterBeans.get(i).filterConfig());
+            ioc.addBean("FilterRegisterBean$" + i, filterRegisterBeans.get(i));
+        });
         IntStream.of(interceptorRegisterBeans.size()).forEach(i->
             ioc.addBean("InterceptorRegisterBeans$"+i, interceptorRegisterBeans.get(i))
         );
