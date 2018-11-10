@@ -6,6 +6,7 @@ import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.annotation.*;
 import me.stevenkin.boomvc.mvc.mapping.condition.Condition;
 import me.stevenkin.boomvc.mvc.mapping.condition.HttpMethodCondition;
+import me.stevenkin.boomvc.mvc.mapping.condition.RouteMappingInfo;
 import me.stevenkin.boomvc.mvc.mapping.condition.UrlPatternCondition;
 import me.stevenkin.boomvc.mvc.rount.RouteMethod;
 import me.stevenkin.boomvc.mvc.rount.RouteStruct;

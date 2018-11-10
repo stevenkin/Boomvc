@@ -1,7 +1,6 @@
-package me.stevenkin.boomvc.mvc.mapping;
+package me.stevenkin.boomvc.mvc.mapping.condition;
 
 import me.stevenkin.boomvc.http.HttpRequest;
-import me.stevenkin.boomvc.mvc.mapping.condition.Condition;
 
 import java.util.ArrayList;
 import java.util.List;
