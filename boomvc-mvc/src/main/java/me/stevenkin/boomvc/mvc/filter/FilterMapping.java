@@ -11,4 +11,6 @@ public interface FilterMapping {
 
     FilterChain mappingFilters(HttpRequest request);
 
+    void distory();
+
 }

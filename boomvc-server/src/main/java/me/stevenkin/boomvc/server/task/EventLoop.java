@@ -4,8 +4,10 @@ import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.mvc.MvcDispatcher;
 import me.stevenkin.boomvc.mvc.filter.FilterChain;
+import me.stevenkin.boomvc.mvc.filter.FilterMapping;
 import me.stevenkin.boomvc.mvc.filter.FilterRegisterBean;
 import me.stevenkin.boomvc.mvc.filter.imp.MvcFilterChain;
+import me.stevenkin.boomvc.mvc.filter.imp.MvcFilterMapping;
 import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.parser.http.HttpProtocolParser;
@@ -31,7 +33,7 @@ public class EventLoop implements Runnable, Task {
 
     private MvcDispatcher dispatcher;
 
-    private FilterChain filterChain;
+    private FilterMapping filterMapping;
 
     private volatile boolean isStart = false;
 
@@ -42,6 +44,10 @@ public class EventLoop implements Runnable, Task {
         this.childGroup = childGroup;
         this.dispatcher = dispatcher;
         this.semaphore = semaphore;
+        List<FilterRegisterBean> filterRegisterBeans = WebContext.ioc().getBeans(FilterRegisterBean.class);
+        this.filterMapping = new MvcFilterMapping();
+        this.filterMapping.registerDispatcher(this.dispatcher);
+        filterRegisterBeans.forEach(f->this.filterMapping.registerFilter(f));
     }
 
     @Override
@@ -111,13 +117,9 @@ public class EventLoop implements Runnable, Task {
             response = httpProtocolParser.genHttpResponse();
             if(id != null)
                 response.cookie(SessionManager.SESSION_KEY, id);
-            List<FilterRegisterBean> filterRegisterBeans = WebContext.ioc().getBeans(FilterRegisterBean.class);
-            this.filterChain = new MvcFilterChain();
-            this.filterChain.dispatcher(this.dispatcher);
-            filterRegisterBeans.forEach(f->this.filterChain.addFilter(f.filter()));
-            this.filterChain.doFilter(request, response);
-            response.status(200)
-                    .body("hello boomvc");
+            this.filterMapping.mappingFilters(request).doFilter(request, response);
+            /*response.status(200)
+                    .body("hello boomvc");*/
             response.flush();
             httpProtocolParser.putHttpResponse(response);
             key.interestOps(SelectionKey.OP_WRITE);
@@ -155,8 +157,8 @@ public class EventLoop implements Runnable, Task {
 
     @Override
     public void stop() {
+        this.filterMapping.distory();
         this.isStart = false;
-        this.filterChain.destroy();
     }
 
     public Semaphore semaphore(){

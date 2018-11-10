@@ -41,4 +41,10 @@ public class MvcFilterMapping implements FilterMapping {
         filterChain.dispatcher(this.dispatcher);
         return filterChain;
     }
+
+    @Override
+    public void distory() {
+        this.registeredFilters.forEach(f->f.filter().destroy());
+        this.dispatcher.destroy();
+    }
 }

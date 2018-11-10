@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Route {
 
-    String[] value() default "/";
+    String[] value() default {"/"};
 
     HttpMethod method() default HttpMethod.GET;
 }

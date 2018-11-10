@@ -7,14 +7,12 @@ import java.util.regex.Pattern;
 
 public class PathKit {
 
-    public static final  String  VAR_REGEXP          = ":(\\w+)";
     public static final  String  VAR_REPLACE         = "([^#/?.]+)";
     private static final String  SLASH               = "/";
-    public static final  Pattern VAR_REGEXP_PATTERN  = Pattern.compile(VAR_REGEXP);
     private static final Pattern VAR_FIXPATH_PATTERN = Pattern.compile("\\s");
 
     public static String fixPath(String path) {
-        if (null == path) {
+        if (null == path || "".equals(path)) {
             return SLASH;
         }
         if (path.charAt(0) != '/') {
