@@ -4,14 +4,13 @@ import me.stevenkin.boomvc.http.HttpMethod;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.annotation.*;
-import me.stevenkin.boomvc.mvc.mapping.condition.Condition;
-import me.stevenkin.boomvc.mvc.mapping.condition.HttpMethodCondition;
-import me.stevenkin.boomvc.mvc.mapping.condition.RouteMappingInfo;
-import me.stevenkin.boomvc.mvc.mapping.condition.UrlPatternCondition;
+import me.stevenkin.boomvc.mvc.mapping.condition.*;
 import me.stevenkin.boomvc.mvc.rount.RouteMethod;
 import me.stevenkin.boomvc.mvc.rount.RouteStruct;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,6 +53,7 @@ public class DefaultRouteMapping implements RouteMapping {
                 .postRoute(method.getAnnotation(PostRoute.class))
                 .putRoute(method.getAnnotation(PutRoute.class))
                 .deleteRoute(method.getAnnotation(DeleteRoute.class))
+                .headers(method.getAnnotationsByType(Header.class))
                 .target(target)
                 .targetType(handle)
                 .handle(method)
@@ -71,17 +71,24 @@ public class DefaultRouteMapping implements RouteMapping {
         Method method = routeStruct.handle();
         Class<?> clazz = routeStruct.targetType();
         Object object = routeStruct.target();
-        RouteMappingInfo routeMappingInfo = getRouteMappingInfo(httpMethod, urlPattern, prefix);
+        Header[] headers = routeStruct.headers();
+        RouteMappingInfo routeMappingInfo = getRouteMappingInfo(httpMethod, urlPattern, prefix, headers);
         RouteMethod routeMethod = new RouteMethod(method, clazz, object);
         this.conditionRouteMethodMap.put(routeMappingInfo, routeMethod);
     }
 
-    private RouteMappingInfo getRouteMappingInfo(HttpMethod httpMethod, String urlPattern, String prefix){
+    private RouteMappingInfo getRouteMappingInfo(HttpMethod httpMethod, String urlPattern, String prefix, Header[] headers){
         Condition condition1 = new HttpMethodCondition(httpMethod);
         Condition condition2 = new UrlPatternCondition(urlPattern, prefix);
+        List<Condition> headerConditions = new ArrayList<>();
+        if(headers != null && headers.length > 0)
+            for(Header header : headers){
+                headerConditions.add(new HttpHeaderCondition(header.name(), header.header()));
+            }
         RouteMappingInfo routeMappingInfo = new RouteMappingInfo();
         routeMappingInfo.condition(condition1);
         routeMappingInfo.condition(condition2);
+        headerConditions.forEach(c->routeMappingInfo.condition(c));
         return routeMappingInfo;
 
     }

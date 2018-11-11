@@ -1,5 +1,6 @@
 package me.stevenkin.boomvc.mvc.rount;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class RouteMethod {
@@ -14,6 +15,11 @@ public class RouteMethod {
         this.method = method;
         this.targetClass = targetClass;
         this.target = target;
+    }
+
+    public Object invoke(Object... args) throws Exception {
+        method.setAccessible(true);
+        return method.invoke(target, args);
     }
 
     public Method getMethod() {

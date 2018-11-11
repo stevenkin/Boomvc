@@ -13,6 +13,7 @@ public class RouteStruct {
     private PostRoute postRoute;
     private PutRoute putRoute;
     private DeleteRoute deleteRoute;
+    private Header[] headers;
     private String prefix;
     private Object target;
     private Class<?> targetType;
@@ -24,6 +25,7 @@ public class RouteStruct {
         this.postRoute = builder.postRoute;
         this.putRoute = builder.putRoute;
         this.deleteRoute = builder.deleteRoute;
+        this.headers = builder.headers;
         this.prefix = builder.prefix;
         this.target = builder.target;
         this.targetType = builder.targetType;
@@ -90,6 +92,10 @@ public class RouteStruct {
         return deleteRoute;
     }
 
+    public Header[] headers() {
+        return headers;
+    }
+
     public String prefix() {
         return prefix;
     }
@@ -116,6 +122,7 @@ public class RouteStruct {
         private PostRoute postRoute;
         private PutRoute putRoute;
         private DeleteRoute deleteRoute;
+        private Header[] headers;
         private String prefix;
         private Object target;
         private Class<?> targetType;
@@ -143,6 +150,11 @@ public class RouteStruct {
 
         public RouteStructBuilder deleteRoute(DeleteRoute deleteRoute) {
             this.deleteRoute = deleteRoute;
+            return this;
+        }
+
+        public RouteStructBuilder headers(Header[] headers){
+            this.headers = headers;
             return this;
         }
 

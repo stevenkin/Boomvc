@@ -7,8 +7,8 @@ import java.lang.annotation.*;
 @Repeatable(Headers.class)
 public @interface Header {
 
-    String name() default "";
+    String name() default "^.+$";
 
-    String header() default "";
+    String header() default "^.+$";
 
 }
