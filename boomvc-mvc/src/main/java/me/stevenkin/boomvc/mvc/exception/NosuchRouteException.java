@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.mvc.mapping;
+package me.stevenkin.boomvc.mvc.exception;
 
 public class NosuchRouteException extends Exception {
 }

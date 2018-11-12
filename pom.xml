@@ -22,6 +22,7 @@
         <junit.version>4.12</junit.version>
         <guava.version>18.0</guava.version>
         <slf4j-api.version>1.7.21</slf4j-api.version>
+        <javassist.version>3.21.0-GA</javassist.version>
     </properties>
 
     <dependencyManagement>
@@ -38,6 +39,12 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-all</artifactId>
+                <version>4.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

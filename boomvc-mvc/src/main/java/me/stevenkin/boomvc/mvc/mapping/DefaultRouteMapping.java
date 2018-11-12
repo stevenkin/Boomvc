@@ -4,6 +4,7 @@ import me.stevenkin.boomvc.http.HttpMethod;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.annotation.*;
+import me.stevenkin.boomvc.mvc.exception.NosuchRouteException;
 import me.stevenkin.boomvc.mvc.mapping.condition.*;
 import me.stevenkin.boomvc.mvc.rount.RouteMethod;
 import me.stevenkin.boomvc.mvc.rount.RouteStruct;
