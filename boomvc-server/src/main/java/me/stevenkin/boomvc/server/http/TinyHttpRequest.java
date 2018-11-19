@@ -91,9 +91,8 @@ public class TinyHttpRequest implements HttpRequest {
     }
 
     @Override
-    public Optional<List<HttpQueryParameter>> parameters(String name) {
-        return Optional.of((List<HttpQueryParameter>)(ImmutableList.copyOf(this.parameters.get(name))))
-                .filter(list->list.size()>0);
+    public List<HttpQueryParameter> parameters(String name) {
+        return Lists.newArrayList(this.parameters.get(name));
     }
 
     @Override
@@ -133,9 +132,8 @@ public class TinyHttpRequest implements HttpRequest {
     }
 
     @Override
-    public Optional<List<HttpHeader>> headers(String name) {
-        return Optional.of((List<HttpHeader>)ImmutableList.copyOf(this.headers.get(name)))
-                .filter(list->list.size()>0);
+    public List<HttpHeader> headers(String name) {
+        return ImmutableList.copyOf(this.headers.get(name));
     }
 
     @Override

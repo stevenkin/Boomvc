@@ -58,12 +58,10 @@ public interface HttpRequest {
 
     Set<String> parameterNames();
 
-    Optional<List<HttpQueryParameter>> parameters(String name);
+    List<HttpQueryParameter> parameters(String name);
 
     default Optional<HttpQueryParameter> firstParameter(String name){
-        return this.parameters(name)
-                .filter(list->list.size()>0)
-                .map(list->list.get(0));
+        return parameters(name).stream().findFirst();
     }
 
     HttpMethod httpMethod();
@@ -92,12 +90,10 @@ public interface HttpRequest {
 
     Set<String> headerNames();
 
-    Optional<List<HttpHeader>> headers(String name);
+    List<HttpHeader> headers(String name);
 
     default Optional<HttpHeader> firstHeader(String name){
-        return this.headers(name)
-                .filter(list->list.size()>0)
-                .map(list->list.get(0));
+        return headers(name).stream().findFirst();
 
     }
 
