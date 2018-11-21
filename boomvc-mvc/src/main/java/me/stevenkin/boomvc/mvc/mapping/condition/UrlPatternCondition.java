@@ -80,13 +80,15 @@ public class UrlPatternCondition implements Condition {
         Matcher matcher = this.patternThreadLocal.get().matcher(parsePath(request.uri()));
         Map<String, String> urlVars = new HashMap<>();
         boolean match = matcher.matches();
+        if(!match)
+            return false;
         String sub;
         int i = 1;
         int j = 0;
         while((sub = matcher.group(i++))!=null){
             urlVars.put(this.templateNames.get(j++), sub);
         }
-        request.attribute(HttpRequest.URi_PATTERN_VALUES, urlVars);
-        return match;
+        request.attribute(HttpRequest.URI_PATTERN_VALUES, urlVars);
+        return true;
     }
 }

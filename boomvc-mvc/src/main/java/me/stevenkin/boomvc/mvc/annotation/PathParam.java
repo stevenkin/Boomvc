@@ -9,6 +9,4 @@ public @interface PathParam {
 
     String name() default "";
 
-    String defaultValue() default "";
-
 }

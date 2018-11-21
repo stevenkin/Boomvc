@@ -5,15 +5,16 @@ import jdk.internal.org.objectweb.asm.*;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Map;
+import java.lang.reflect.ParameterizedType;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ReflectKit {
 
     private static final Map<Method, String[]> METHOD_NAMES_POOL = new ConcurrentHashMap<>(64);
-
-
 
     public static String[] getMethodVariableNames(Method method) {
         if(METHOD_NAMES_POOL.containsKey(method))
@@ -25,6 +26,35 @@ public final class ReflectKit {
         return variableNames;
     }
 
+    public static boolean isBasicType(java.lang.reflect.Type type){
+        return type.equals(String.class) || type.equals(Integer.class) ||
+                type.equals(Long.class) || type.equals(Double.class) ||
+                type.equals(Float.class) || type.equals(Short.class) ||
+                type.equals(Boolean.class) || type.equals(Byte.class) ||
+                type.equals(Character.class) || type.equals(int.class) ||
+                type.equals(long.class) || type.equals(double.class) ||
+                type.equals(float.class) || type.equals(short.class) ||
+                type.equals(boolean.class) || type.equals(byte.class) ||
+                type.equals(char.class) || type.equals(Date.class) ||
+                type.equals(BigDecimal.class) || type.equals(LocalDate.class) ||
+                type.equals(LocalDateTime.class);
+    }
+
+    public static boolean isCollectionType(java.lang.reflect.Type type){
+        Class<?> clazz;
+        if(type instanceof ParameterizedType){
+            clazz = (Class<?>) ((ParameterizedType) type).getRawType();
+        }else{
+            clazz = (Class<?>) type;
+        }
+        return clazz.isArray() || Collection.class.isAssignableFrom(clazz);
+
+    }
+
+
+
+
+
     /**
      * 获取指定类指定方法的参数名
      *
@@ -32,7 +62,7 @@ public final class ReflectKit {
      * @param method 要获取参数名的方法
      * @return 按参数顺序排列的参数名列表，如果没有参数，则返回null
      */
-    public static String[] getMethodParameterNamesByAsm4(Class<?> clazz, final Method method) {
+    private static String[] getMethodParameterNamesByAsm4(Class<?> clazz, final Method method) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes == null || parameterTypes.length == 0) {
             return null;

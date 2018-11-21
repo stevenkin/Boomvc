@@ -16,7 +16,7 @@ public interface HttpRequest {
 
     String UNKNOWN_MAGIC = "unknown";
 
-    String URi_PATTERN_VALUES = "uri_pattern_values";
+    String URI_PATTERN_VALUES = "uri_pattern_values";
 
     String HOST = "Host";
 

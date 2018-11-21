@@ -29,7 +29,7 @@ public class DefaultRouteMapping implements RouteMapping {
 
 
     private boolean isHandle(Class<?> clazz){
-        return false;
+        return clazz.getAnnotation(Path.class) != null;
     }
 
     private void registerRoute(Class<?> handle, Object target){
@@ -44,7 +44,12 @@ public class DefaultRouteMapping implements RouteMapping {
     }
 
     private boolean isRouteMethod(Method method){
-        return false;
+        return method.getAnnotation(Route.class) != null
+                || method.getAnnotation(GetRoute.class) != null
+                || method.getAnnotation(DeleteRoute.class) != null
+                || method.getAnnotation(PostRoute.class) != null
+                || method.getAnnotation(PutRoute.class) != null;
+
     }
 
     private void registerRoute(String prefix, Method method, Class<?> handle, Object target){
@@ -89,7 +94,7 @@ public class DefaultRouteMapping implements RouteMapping {
         RouteMappingInfo routeMappingInfo = new RouteMappingInfo();
         routeMappingInfo.condition(condition1);
         routeMappingInfo.condition(condition2);
-        headerConditions.forEach(c->routeMappingInfo.condition(c));
+        headerConditions.forEach(routeMappingInfo::condition);
         return routeMappingInfo;
 
     }

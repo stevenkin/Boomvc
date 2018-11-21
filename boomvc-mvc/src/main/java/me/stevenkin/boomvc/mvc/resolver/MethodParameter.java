@@ -44,6 +44,12 @@ public class MethodParameter {
         return parameterAnnotations;
     }
 
+    public Annotation getParameterAnnotation(){
+        if(getParameterAnnotations() == null || getParameterAnnotations().length == 0)
+            return null;
+        return getParameterAnnotations()[0];
+    }
+
     public void setParameterAnnotations(Annotation[] parameterAnnotations) {
         this.parameterAnnotations = parameterAnnotations;
     }

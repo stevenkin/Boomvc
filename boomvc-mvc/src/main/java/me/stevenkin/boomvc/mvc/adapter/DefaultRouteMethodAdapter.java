@@ -80,11 +80,10 @@ public class DefaultRouteMethodAdapter implements RouteMethodAdapter {
 
     private <T> void defaultOrCustom(List<T> source, List<T> defaults, List<T> customs){
         source.forEach(s->{
-            if(s.getClass().getAnnotation(Custom.class) != null)
-                customs.add(s);
-            else
+            if(s.getClass().getAnnotation(Custom.class) == null && s.getClass().getPackage().getName().startsWith("me.stevenkin.boomvc"))
                 defaults.add(s);
-
+            else
+                customs.add(s);
         });
     }
 
