@@ -6,11 +6,9 @@ import java.util.Map;
 public class ModelAndView {
     private Map<String, Object> model = new HashMap<>();
 
-    private String view;
+    private Object view;
 
     private boolean isRestful;
-
-    private boolean isRedirect;
 
     public ModelAndView addAttribute(String key, Object value){
         model.put(key, value);
@@ -38,11 +36,11 @@ public class ModelAndView {
         this.model = model;
     }
 
-    public String getView() {
+    public Object getView() {
         return view;
     }
 
-    public void setView(String view) {
+    public void setView(Object view) {
         this.view = view;
     }
 
@@ -52,13 +50,5 @@ public class ModelAndView {
 
     public void setRestful(boolean restful) {
         isRestful = restful;
-    }
-
-    public boolean isRedirect() {
-        return isRedirect;
-    }
-
-    public void setRedirect(boolean redirect) {
-        isRedirect = redirect;
     }
 }

@@ -61,7 +61,7 @@ public class DefaultRouteMethodAdapter implements RouteMethodAdapter {
         }
         if(null == resolver)
             throw new NosuchReturnValueResolverException();
-        return resolver.resolve(object, returnType, request, response);
+        return resolver.resolve(object, routeMethod.getMethod(), returnType, request, response);
     }
 
     @Override

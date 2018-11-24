@@ -11,6 +11,6 @@ public interface ReturnValueResolver {
 
     boolean support(Type returnType, Method method);
 
-    ModelAndView resolve(Object returnValue, Type returnType, HttpRequest request, HttpResponse response) throws Exception;
+    ModelAndView resolve(Object returnValue, Method method, Type returnType, HttpRequest request, HttpResponse response) throws Exception;
 
 }
