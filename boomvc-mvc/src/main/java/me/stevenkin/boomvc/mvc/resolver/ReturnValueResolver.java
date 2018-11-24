@@ -4,12 +4,13 @@ import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.mvc.view.ModelAndView;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 public interface ReturnValueResolver {
 
-    boolean support(Type returnType);
+    boolean support(Type returnType, Method method);
 
-    void resolve(Object returnValue, Type returnType, ModelAndView modelAndView, HttpRequest request, HttpResponse response) throws Exception;
+    ModelAndView resolve(Object returnValue, Type returnType, HttpRequest request, HttpResponse response) throws Exception;
 
 }

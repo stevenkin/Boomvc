@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 //TODO test
-public abstract class BasicTypeParameterResolver implements ParameterResolver {
+public abstract class AbstractParameterResolver implements ParameterResolver {
 
     public Object basicTypeParameterResolve(String value, Type type) throws Exception{
         if(value == null || "".equals(value)){
@@ -73,7 +73,9 @@ public abstract class BasicTypeParameterResolver implements ParameterResolver {
         return value;
     }
 
-    public Object collectionTypeResolve(List<HttpQueryParameter> querys, Type type) throws Exception{
+    public Object collectionTypeResolve(List<String> strings, Type type) throws Exception{
+        if(strings == null || strings.size() == 0)
+            throw new ParameterResolverException("the list is empty");
         Type elemType;
         if(type instanceof ParameterizedType) {
             elemType = ((ParameterizedType) type).getActualTypeArguments()[0];
@@ -89,9 +91,9 @@ public abstract class BasicTypeParameterResolver implements ParameterResolver {
         }else
             throw new ParameterResolverException("the type [" + type + "] is wrong");
         Type elemtype1 = elemType;
-        List<Object> values = querys.stream().map(p->{
+        List<Object> values = strings.stream().map(s->{
             try {
-                return basicTypeParameterResolve(p.value(), elemtype1);
+                return basicTypeParameterResolve(s, elemtype1);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException(new ParameterResolverException("type resolve fail"));

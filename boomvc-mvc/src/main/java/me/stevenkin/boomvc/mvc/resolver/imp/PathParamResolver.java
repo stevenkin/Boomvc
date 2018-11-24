@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Optional;
 
-public class PathParamResolver extends BasicTypeParameterResolver {
+public class PathParamResolver extends AbstractParameterResolver {
 
     @Override
     public boolean support(MethodParameter parameter) {
@@ -21,7 +21,7 @@ public class PathParamResolver extends BasicTypeParameterResolver {
     }
 
     @Override
-    public Object resolve(MethodParameter parameter, ModelAndView modelAndView, HttpRequest request, HttpResponse response) throws Exception {
+    public Object resolve(MethodParameter parameter, HttpRequest request, HttpResponse response) throws Exception {
         Type type = parameter.getParameterType();
         PathParam pathParam = (PathParam) parameter.getParameterAnnotation();
         String name = "".equals(pathParam.name()) ? parameter.getParameterName() : pathParam.name();

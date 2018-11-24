@@ -9,6 +9,4 @@ public @interface CookieParam {
 
     String value() default "";
 
-    String defaultValue() default "";
-
 }

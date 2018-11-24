@@ -8,6 +8,6 @@ public interface ParameterResolver {
 
     boolean support(MethodParameter parameter);
 
-    Object resolve(MethodParameter parameter, ModelAndView modelAndView, HttpRequest request, HttpResponse response) throws Exception;
+    Object resolve(MethodParameter parameter, HttpRequest request, HttpResponse response) throws Exception;
 
 }

@@ -38,7 +38,6 @@ public class DefaultRouteMethodAdapter implements RouteMethodAdapter {
         List<ReturnValueResolver> returnValueResolvers = Lists.newArrayList(this.defaultReturnValueResolver);
         returnValueResolvers.addAll(this.customReturnValueResolver);
         List<Object> args = new ArrayList<>(parameters.size());
-        ModelAndView modelAndView = new ModelAndView();
         for (MethodParameter parameter : parameters){
             ParameterResolver resolver = null;
             for (ParameterResolver resolver1 : parameterResolvers){
@@ -49,21 +48,20 @@ public class DefaultRouteMethodAdapter implements RouteMethodAdapter {
             }
             if(null == resolver)
                 throw new NosuchParameterResolverException();
-            args.add(resolver.resolve(parameter, modelAndView, request, response));
+            args.add(resolver.resolve(parameter, request, response));
         }
         Object object = routeMethod.invoke(args);
         Type returnType = routeMethod.getMethod().getReturnType();
         ReturnValueResolver resolver = null;
         for (ReturnValueResolver resolver1 : returnValueResolvers){
-            if(resolver1.support(returnType)){
+            if(resolver1.support(returnType, routeMethod.getMethod())){
                 resolver = resolver1;
                 break;
             }
         }
         if(null == resolver)
             throw new NosuchReturnValueResolverException();
-        resolver.resolve(object, returnType, modelAndView, request, response);
-        return modelAndView;
+        return resolver.resolve(object, returnType, request, response);
     }
 
     @Override

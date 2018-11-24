@@ -41,19 +41,17 @@ public final class ReflectKit {
     }
 
     public static boolean isCollectionType(java.lang.reflect.Type type){
-        Class<?> clazz;
         if(type instanceof ParameterizedType){
-            clazz = (Class<?>) ((ParameterizedType) type).getRawType();
-        }else{
-            clazz = (Class<?>) type;
+            Class<?> clazz = (Class<?>) ((ParameterizedType) type).getRawType();
+            java.lang.reflect.Type elemType = ((ParameterizedType) type).getActualTypeArguments()[0];
+            return Collection.class.isAssignableFrom(clazz) && isBasicType(elemType);
         }
-        return clazz.isArray() || Collection.class.isAssignableFrom(clazz);
+        if(type instanceof Class && ((Class) type).isArray()){
+            return isBasicType(((Class) type).getComponentType());
+        }
+        return false;
 
     }
-
-
-
-
 
     /**
      * 获取指定类指定方法的参数名

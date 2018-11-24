@@ -13,7 +13,7 @@ public class RequestParamResolver implements ParameterResolver {
     }
 
     @Override
-    public Object resolve(MethodParameter parameter, ModelAndView modelAndView, HttpRequest request, HttpResponse response) throws Exception {
+    public Object resolve(MethodParameter parameter, HttpRequest request, HttpResponse response) throws Exception {
         return request;
     }
 }

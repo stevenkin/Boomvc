@@ -11,8 +11,9 @@ import me.stevenkin.boomvc.mvc.view.ModelAndView;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class QueryParamResolver extends BasicTypeParameterResolver {
+public class QueryParamResolver extends AbstractParameterResolver {
 
     @Override
     public boolean support(MethodParameter parameter) {
@@ -22,7 +23,7 @@ public class QueryParamResolver extends BasicTypeParameterResolver {
 
 
     @Override
-    public Object resolve(MethodParameter parameter, ModelAndView modelAndView, HttpRequest request, HttpResponse response) throws Exception {
+    public Object resolve(MethodParameter parameter, HttpRequest request, HttpResponse response) throws Exception {
         QueryParam queryParam = (QueryParam) parameter.getParameterAnnotation();
         Type type = parameter.getParameterType();
         if(queryParam == null)
@@ -36,7 +37,7 @@ public class QueryParamResolver extends BasicTypeParameterResolver {
             return basicTypeParameterResolve(value, parameter.getParameterType());
         }
         if(ReflectKit.isCollectionType(type)){
-            return collectionTypeResolve(request.parameters(name), type);
+            return collectionTypeResolve(request.parameters(name).stream().map(HttpQueryParameter::value).collect(Collectors.toList()), type);
         }
         throw new ParameterResolverException("type [" + type + "] is wrong");
     }

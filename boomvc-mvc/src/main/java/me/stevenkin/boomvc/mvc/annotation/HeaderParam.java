@@ -9,6 +9,4 @@ public @interface HeaderParam {
 
     String value() default "";
 
-    String defaultValue() default "";
-
 }
