@@ -169,6 +169,7 @@ public class TinyHttpResponse implements HttpResponse {
         StringBuilder stringBuilder = new StringBuilder(responseLine).append("\r\n");
         byte[] body = this.rawBodyOutputStream.toByteArray();
         header("Content-Length", Integer.toString(body.length));
+        cookies.values().stream().forEach(cookie->header("Set-Cookie", cookie.cookieString()));
         this.headers.values().stream().forEach(h->
                 stringBuilder.append(h.toString()).append("\r\n")
         );

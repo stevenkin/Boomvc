@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 
 public class RestfulReturnValueResolver implements ReturnValueResolver {
 
-    private static final String RESTFUL_RESPONSE = "restful_response";
+    public static final String RESTFUL_RESPONSE = "restful_response";
 
     @Override
     public boolean support(Type returnType, Method method){

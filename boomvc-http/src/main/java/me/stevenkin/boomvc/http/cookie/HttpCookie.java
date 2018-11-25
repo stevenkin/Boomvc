@@ -86,7 +86,7 @@ public class HttpCookie {
         this.httpOnly = httpOnly;
     }
 
-    public String setCookieString(){
+    public String cookieString(){
         DateFormat formater = new SimpleDateFormat(
                 "Wdy, DD-Mon-YYYY HH:MM:SS GMT", Locale.US);
         StringBuilder stringBuilder = new StringBuilder();

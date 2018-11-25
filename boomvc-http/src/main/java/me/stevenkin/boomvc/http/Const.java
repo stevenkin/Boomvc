@@ -19,7 +19,7 @@ import java.util.List;
 
 public interface Const {
 
-    String DEFAULT_SERVER_PORT = "9000";
+    String DEFAULT_SERVER_PORT = "8090";
     String DEFAULT_SERVER_ADDRESS = "0.0.0.0";
     String LOCAL_IP_ADDRESS = "127.0.0.1";
     String CONTENT_TYPE_HTML = "text/html; charset=UTF-8";
@@ -30,11 +30,14 @@ public interface Const {
     String DEFAULT_THREAD_NAME = "boom_thread_2333_";
     String DEFAULT_BANNER_PATH = "/banner.txt";
     List<String> DEFAULT_STATICS = new ArrayList<>(
-            Arrays.asList("/favicon.ico", "/robots.txt", "/static", "/upload", "/webjars/"));
+            Arrays.asList("/favicon.ico", "/robots.txt", "/static", "/upload"));
 
     String PROP_NAME0 = "classpath:app.properties";
     String PROP_NAME = "classpath:application.properties";
-    String DEFAULT_SCAN_PACKAGE = "me.stevenkin.boom.mvc";
+    String DEFAULT_SCAN_PACKAGE = "me.stevenkin.boom";
+
+    String REDIRECT_URL = "redirect_url";
+    String REDIRECT_PREFIX = "redirect:";
 
     // Env key
     String ENV_KEY_APP_NAME = "app.name";
@@ -45,8 +48,6 @@ public interface Const {
     String ENV_KEY_CORS_ENABLE = "http.cors.enable";
     String ENV_KEY_SESSION_KEY = "http.session.key";
     String ENV_KEY_SESSION_TIMEOUT = "http.session.timeout";
-    String ENV_KEY_AUTH_USERNAME = "http.auth.username";
-    String ENV_KEY_AUTH_PASSWORD = "http.auth.password";
     String ENV_KEY_HTTP_CACHE_TIMEOUT = "http.cache.timeout";
     String ENV_KEY_HTTP_REQUEST_COST = "http.request.cost";
     String ENV_KEY_PAGE_404 = "mvc.view.404";
