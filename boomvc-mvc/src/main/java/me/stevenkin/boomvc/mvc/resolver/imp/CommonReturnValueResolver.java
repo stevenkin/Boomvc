@@ -1,11 +1,11 @@
 package me.stevenkin.boomvc.mvc.resolver.imp;
 
+import me.stevenkin.boomvc.common.resolver.ReturnValueResolver;
+import me.stevenkin.boomvc.common.view.ModelAndView;
+import me.stevenkin.boomvc.common.view.View;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.mvc.annotation.Restful;
-import me.stevenkin.boomvc.mvc.resolver.ReturnValueResolver;
-import me.stevenkin.boomvc.mvc.view.ModelAndView;
-import me.stevenkin.boomvc.mvc.view.View;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

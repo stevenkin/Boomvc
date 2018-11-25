@@ -1,5 +1,7 @@
 package me.stevenkin.boomvc.mvc.resolver;
 
+import me.stevenkin.boomvc.common.resolver.MethodParameter;
+import me.stevenkin.boomvc.common.resolver.ParameterResolver;
 import me.stevenkin.boomvc.http.HttpQueryParameter;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
@@ -35,6 +37,7 @@ public class ParameterResolverTest {
         ParameterResolver queryParamResolver = new QueryParamResolver();
         Assert.assertTrue(queryParamResolver.support(methodParameter));
         System.out.println(queryParamResolver.resolve(methodParameter, request, response));
+        Assert.assertSame("boomvc", queryParamResolver.resolve(methodParameter, request, response));
     }
 
     public void queryParam(@QueryParam("hello") String hello){

@@ -1,8 +1,8 @@
 package me.stevenkin.boomvc.mvc.filter.imp;
 
+import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
+import me.stevenkin.boomvc.common.filter.FilterChain;
 import me.stevenkin.boomvc.http.HttpRequest;
-import me.stevenkin.boomvc.mvc.MvcDispatcher;
-import me.stevenkin.boomvc.mvc.filter.FilterChain;
 import me.stevenkin.boomvc.mvc.filter.FilterMapping;
 import me.stevenkin.boomvc.mvc.filter.FilterMappingInfo;
 import me.stevenkin.boomvc.mvc.filter.FilterRegisterBean;

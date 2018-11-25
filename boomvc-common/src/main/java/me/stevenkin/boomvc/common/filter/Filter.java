@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.mvc.filter;
+package me.stevenkin.boomvc.common.filter;
 
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;

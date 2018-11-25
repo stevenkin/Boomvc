@@ -1,8 +1,8 @@
-package me.stevenkin.boomvc.mvc.filter;
+package me.stevenkin.boomvc.common.filter;
 
+import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
-import me.stevenkin.boomvc.mvc.MvcDispatcher;
 
 public interface FilterChain {
 

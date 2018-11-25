@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.stevenkin.boomvc.mvc.kit;
+package me.stevenkin.boomvc.common.kit;
 
 import java.util.ArrayList;
 import java.util.Collection;

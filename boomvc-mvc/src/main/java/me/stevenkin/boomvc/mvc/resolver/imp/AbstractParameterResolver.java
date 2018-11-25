@@ -1,9 +1,8 @@
 package me.stevenkin.boomvc.mvc.resolver.imp;
 
-import me.stevenkin.boomvc.http.HttpQueryParameter;
+import me.stevenkin.boomvc.common.kit.DateKit;
+import me.stevenkin.boomvc.common.resolver.ParameterResolver;
 import me.stevenkin.boomvc.mvc.exception.ParameterResolverException;
-import me.stevenkin.boomvc.mvc.kit.DateKit;
-import me.stevenkin.boomvc.mvc.resolver.ParameterResolver;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;

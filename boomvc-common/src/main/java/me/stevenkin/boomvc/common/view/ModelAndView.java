@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.mvc.view;
+package me.stevenkin.boomvc.common.view;
 
 import java.util.HashMap;
 import java.util.Map;

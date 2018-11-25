@@ -1,8 +1,8 @@
-package me.stevenkin.boomvc.mvc.interceptor;
+package me.stevenkin.boomvc.common.interceptor;
 
+import me.stevenkin.boomvc.common.view.ModelAndView;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
-import me.stevenkin.boomvc.mvc.view.ModelAndView;
 
 public interface Interceptor {
 

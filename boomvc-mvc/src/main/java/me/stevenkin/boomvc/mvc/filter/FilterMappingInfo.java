@@ -1,6 +1,9 @@
 package me.stevenkin.boomvc.mvc.filter;
 
 
+import me.stevenkin.boomvc.common.filter.Filter;
+import me.stevenkin.boomvc.common.filter.FilterConfig;
+
 public class FilterMappingInfo {
 
     private Filter filter;

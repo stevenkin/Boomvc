@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.mvc.filter;
+package me.stevenkin.boomvc.common.filter;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package me.stevenkin.boomvc.server.executor;
 
-import me.stevenkin.boomvc.mvc.MvcDispatcher;
+import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
 import me.stevenkin.boomvc.server.task.EventLoop;
 import me.stevenkin.boomvc.server.task.Task;
 

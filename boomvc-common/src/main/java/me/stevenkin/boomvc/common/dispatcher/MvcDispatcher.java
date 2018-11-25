@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.mvc;
+package me.stevenkin.boomvc.common.dispatcher;
 
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;

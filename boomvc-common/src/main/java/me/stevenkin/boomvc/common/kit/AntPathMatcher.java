@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.mvc.kit;
+package me.stevenkin.boomvc.common.kit;
 
 /*
  * Copyright 2002-2018 the original author or authors.
@@ -17,11 +17,7 @@ package me.stevenkin.boomvc.mvc.kit;
  */
 
 
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -596,7 +592,7 @@ public class AntPathMatcher implements PathMatcher {
     /**
      * Given a full path, returns a {@link Comparator} suitable for sorting patterns in order of
      * explicitness.
-     * <p>This{@code Comparator} will {@linkplain java.util.List#sort(Comparator) sort}
+     * <p>This{@code Comparator} will {@linkplain List#sort(Comparator) sort}
      * a list so that more specific patterns (without uri templates or wild cards) come before
      * generic patterns. So given a list with the following patterns:
      * <ol>

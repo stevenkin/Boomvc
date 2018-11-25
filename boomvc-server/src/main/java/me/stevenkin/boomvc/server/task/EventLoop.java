@@ -1,12 +1,10 @@
 package me.stevenkin.boomvc.server.task;
 
+import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
-import me.stevenkin.boomvc.mvc.MvcDispatcher;
-import me.stevenkin.boomvc.mvc.filter.FilterChain;
 import me.stevenkin.boomvc.mvc.filter.FilterMapping;
 import me.stevenkin.boomvc.mvc.filter.FilterRegisterBean;
-import me.stevenkin.boomvc.mvc.filter.imp.MvcFilterChain;
 import me.stevenkin.boomvc.mvc.filter.imp.MvcFilterMapping;
 import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;

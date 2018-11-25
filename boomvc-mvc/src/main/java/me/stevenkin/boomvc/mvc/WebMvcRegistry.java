@@ -1,8 +1,8 @@
 package me.stevenkin.boomvc.mvc;
 
-import me.stevenkin.boomvc.mvc.filter.Filter;
+import me.stevenkin.boomvc.common.filter.Filter;
+import me.stevenkin.boomvc.common.interceptor.Interceptor;
 import me.stevenkin.boomvc.mvc.filter.FilterRegisterBean;
-import me.stevenkin.boomvc.mvc.interceptor.Interceptor;
 import me.stevenkin.boomvc.mvc.interceptor.InterceptorRegisterBean;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.mvc.kit;
+package me.stevenkin.boomvc.common.kit;
 
 import me.stevenkin.boomvc.http.Const;
 
@@ -46,7 +46,7 @@ public class DateKit {
      * @return return string date
      */
     public static String toString(Date date, String pattern) {
-        Instant instant = new java.util.Date((date.getTime())).toInstant();
+        Instant instant = new Date((date.getTime())).toInstant();
         return LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern(pattern));
     }
 

@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.mvc.resolver;
+package me.stevenkin.boomvc.common.resolver;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

@@ -1,11 +1,10 @@
 package me.stevenkin.boomvc.mvc.resolver.imp;
 
+import me.stevenkin.boomvc.common.resolver.MethodParameter;
+import me.stevenkin.boomvc.common.resolver.ParameterResolver;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.http.session.HttpSession;
-import me.stevenkin.boomvc.mvc.resolver.MethodParameter;
-import me.stevenkin.boomvc.mvc.resolver.ParameterResolver;
-import me.stevenkin.boomvc.mvc.view.ModelAndView;
 
 public class SessionParamResolver implements ParameterResolver {
     @Override

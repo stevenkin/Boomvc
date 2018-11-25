@@ -1,9 +1,8 @@
 package me.stevenkin.boomvc.mvc.filter.imp;
 
-import me.stevenkin.boomvc.mvc.kit.AntPathMatcher;
-import me.stevenkin.boomvc.mvc.kit.PathMatcher;
+import me.stevenkin.boomvc.common.kit.AntPathMatcher;
+import me.stevenkin.boomvc.common.kit.PathMatcher;
 
-import java.util.regex.Pattern;
 
 public class PatternThreadLocal extends ThreadLocal<PathMatcher> {
 

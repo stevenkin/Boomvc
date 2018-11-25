@@ -1,12 +1,12 @@
 package me.stevenkin.boomvc.mvc.resolver.imp;
 
+import me.stevenkin.boomvc.common.kit.ReflectKit;
+import me.stevenkin.boomvc.common.resolver.MethodParameter;
 import me.stevenkin.boomvc.http.HttpHeader;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.mvc.annotation.HeaderParam;
 import me.stevenkin.boomvc.mvc.exception.ParameterResolverException;
-import me.stevenkin.boomvc.mvc.kit.ReflectKit;
-import me.stevenkin.boomvc.mvc.resolver.MethodParameter;
 
 import java.util.Optional;
 import java.util.stream.Collectors;

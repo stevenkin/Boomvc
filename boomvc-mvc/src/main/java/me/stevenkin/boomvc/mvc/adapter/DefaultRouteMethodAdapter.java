@@ -1,18 +1,18 @@
 package me.stevenkin.boomvc.mvc.adapter;
 
 import com.google.common.collect.Lists;
+import me.stevenkin.boomvc.common.kit.ReflectKit;
+import me.stevenkin.boomvc.common.resolver.MethodParameter;
+import me.stevenkin.boomvc.common.resolver.ParameterResolver;
+import me.stevenkin.boomvc.common.resolver.ReturnValueResolver;
+import me.stevenkin.boomvc.common.view.ModelAndView;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.annotation.Custom;
 import me.stevenkin.boomvc.mvc.exception.NosuchParameterResolverException;
 import me.stevenkin.boomvc.mvc.exception.NosuchReturnValueResolverException;
-import me.stevenkin.boomvc.mvc.kit.ReflectKit;
-import me.stevenkin.boomvc.mvc.resolver.MethodParameter;
-import me.stevenkin.boomvc.mvc.resolver.ParameterResolver;
-import me.stevenkin.boomvc.mvc.resolver.ReturnValueResolver;
 import me.stevenkin.boomvc.mvc.rount.RouteMethod;
-import me.stevenkin.boomvc.mvc.view.ModelAndView;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

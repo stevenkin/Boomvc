@@ -1,8 +1,7 @@
-package me.stevenkin.boomvc.mvc.resolver;
+package me.stevenkin.boomvc.common.resolver;
 
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
-import me.stevenkin.boomvc.mvc.view.ModelAndView;
 
 public interface ParameterResolver {
 

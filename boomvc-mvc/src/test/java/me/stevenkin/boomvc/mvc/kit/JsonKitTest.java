@@ -1,6 +1,7 @@
 package me.stevenkin.boomvc.mvc.kit;
 
 import com.google.gson.reflect.TypeToken;
+import me.stevenkin.boomvc.common.kit.JsonKit;
 import org.junit.Test;
 
 import java.lang.reflect.Type;

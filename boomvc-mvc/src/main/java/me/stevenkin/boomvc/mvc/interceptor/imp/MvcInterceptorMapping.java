@@ -1,8 +1,8 @@
 package me.stevenkin.boomvc.mvc.interceptor.imp;
 
+import me.stevenkin.boomvc.common.interceptor.Interceptor;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.mvc.filter.imp.PatternThreadLocal;
-import me.stevenkin.boomvc.mvc.interceptor.Interceptor;
 import me.stevenkin.boomvc.mvc.interceptor.InterceptorMapping;
 import me.stevenkin.boomvc.mvc.interceptor.InterceptorRegisterBean;
 

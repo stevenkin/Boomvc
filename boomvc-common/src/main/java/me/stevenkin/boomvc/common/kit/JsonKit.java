@@ -1,4 +1,4 @@
-package me.stevenkin.boomvc.mvc.kit;
+package me.stevenkin.boomvc.common.kit;
 
 import com.google.gson.Gson;
 

@@ -1,5 +1,7 @@
 package me.stevenkin.boomvc.mvc.interceptor;
 
+import me.stevenkin.boomvc.common.interceptor.Interceptor;
+
 public class InterceptorRegisterBean {
 
     private Interceptor interceptor;

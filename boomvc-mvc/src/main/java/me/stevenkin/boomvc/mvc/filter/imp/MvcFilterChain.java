@@ -1,10 +1,10 @@
 package me.stevenkin.boomvc.mvc.filter.imp;
 
+import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
+import me.stevenkin.boomvc.common.filter.Filter;
+import me.stevenkin.boomvc.common.filter.FilterChain;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
-import me.stevenkin.boomvc.mvc.MvcDispatcher;
-import me.stevenkin.boomvc.mvc.filter.Filter;
-import me.stevenkin.boomvc.mvc.filter.FilterChain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +39,7 @@ public class MvcFilterChain implements FilterChain {
         this.dispatcher = dispatcher;
         return this;
     }
+
 
     @Override
     public void destroy() {
