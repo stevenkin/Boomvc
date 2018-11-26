@@ -69,6 +69,13 @@ public class Boom {
         return this;
     }
 
+    public Boom templatePath(String path){
+        if (path == null || "".equals(path))
+            throw new NullPointerException();
+        this.environment.put(ENV_KEY_TEMPLATE_PATH, path);
+        return this;
+    }
+
     public Boom addStatics(String... statics){
         if(null == statics)
             throw new NullPointerException();
