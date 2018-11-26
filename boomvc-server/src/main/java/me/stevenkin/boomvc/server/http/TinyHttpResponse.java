@@ -148,7 +148,7 @@ public class TinyHttpResponse implements HttpResponse {
     public OutputStream outputStream(){
         if (this.isSetBody)
             throw new UnsupportedOperationException("already set body !");
-        return this.rawOutputStream;
+        return this.rawBodyOutputStream;
     }
 
     @Override
