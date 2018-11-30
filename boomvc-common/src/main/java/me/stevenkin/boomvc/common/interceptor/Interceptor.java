@@ -6,10 +6,10 @@ import me.stevenkin.boomvc.http.HttpResponse;
 
 public interface Interceptor {
 
-    boolean preHandle(HttpRequest request, HttpResponse response, Object o) throws Exception;
+    boolean preHandle(HttpRequest request, HttpResponse response);
 
-    void postHandle(HttpRequest request, HttpResponse response, Object o, ModelAndView modelAndView) throws Exception;
+    void postHandle(HttpRequest request, HttpResponse response, ModelAndView modelAndView);
 
-    void afterCompletion(HttpRequest request, HttpResponse response, Object o, Exception e) throws Exception;
+    void afterCompletion(HttpRequest request, HttpResponse response, Exception e);
 
 }

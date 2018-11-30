@@ -2,19 +2,15 @@ package me.stevenkin.boomvc.mvc.view;
 
 import me.stevenkin.boomvc.common.view.ModelAndView;
 import me.stevenkin.boomvc.common.view.View;
-import me.stevenkin.boomvc.ioc.annotation.ConfigProperties;
-import me.stevenkin.boomvc.ioc.annotation.Value;
 
 import java.lang.reflect.Constructor;
 
 import static me.stevenkin.boomvc.http.Const.*;
 
-@ConfigProperties(prefix = "mvc.template")
 public class DefaultViewResolver implements ViewResolver {
 
     private Class<? extends View> viewType;
 
-    @Value
     private String path;
 
     @Override
@@ -32,7 +28,8 @@ public class DefaultViewResolver implements ViewResolver {
     }
 
     @Override
-    public void registerView(Class<? extends View> viewType) {
+    public void init(Class<? extends View> viewType, String templatePath) {
         this.viewType = viewType;
+        this.path = templatePath;
     }
 }

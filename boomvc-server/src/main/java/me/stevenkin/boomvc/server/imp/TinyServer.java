@@ -3,6 +3,7 @@ package me.stevenkin.boomvc.server.imp;
 import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
 import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
+import me.stevenkin.boomvc.mvc.DefaultMvcDispatcher;
 import me.stevenkin.boomvc.server.Boom;
 import me.stevenkin.boomvc.server.Server;
 import me.stevenkin.boomvc.server.WebContext;
@@ -40,7 +41,8 @@ public class TinyServer implements Server {
         this.boom = boom;
         this.ioc = boom.ioc();
         this.environment = boom.environment();
-        //TODO this.dispatcher = new MvcDispatcher
+        this.dispatcher = new DefaultMvcDispatcher();
+        this.dispatcher.init(this.ioc, this.environment, this.boom.ViewTemplate());
         this.workers = new EventExecutorGroup(
                 Integer.parseInt(this.environment.getValue(ENV_KEY_SERVER_IO_THREAD_COUNT, Integer.toString(DEFAULT_IO_THREAD_COUNT))),
                 new NameThreadFactory("@worker"),

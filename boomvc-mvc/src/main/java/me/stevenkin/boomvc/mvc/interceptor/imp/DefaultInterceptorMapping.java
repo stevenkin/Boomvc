@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MvcInterceptorMapping implements InterceptorMapping {
+public class DefaultInterceptorMapping implements InterceptorMapping {
 
     private List<InterceptorRegisterBean> interceptorRegisterBeans = new ArrayList<>();
 

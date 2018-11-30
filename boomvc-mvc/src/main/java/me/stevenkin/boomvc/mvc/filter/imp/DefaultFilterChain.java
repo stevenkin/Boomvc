@@ -9,7 +9,7 @@ import me.stevenkin.boomvc.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MvcFilterChain implements FilterChain {
+public class DefaultFilterChain implements FilterChain {
 
     private List<Filter> filters = new ArrayList<>();
 

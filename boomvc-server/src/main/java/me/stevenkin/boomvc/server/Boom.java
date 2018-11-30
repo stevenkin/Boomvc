@@ -1,5 +1,6 @@
 package me.stevenkin.boomvc.server;
 
+import me.stevenkin.boomvc.common.view.View;
 import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.ioc.IocFactory;
@@ -34,6 +35,8 @@ public class Boom {
 
     private Class<?> bootClass;
 
+    private Class<? extends View> viewTemplate;
+
     private String bannerText;
 
     private SessionManager sessionManager = new SessionManager();
@@ -67,6 +70,15 @@ public class Boom {
             throw new NullPointerException();
         this.ioc.addBean(bean);
         return this;
+    }
+
+    public Boom viewTemplate(Class<? extends View> viewTemplate){
+        this.viewTemplate = viewTemplate;
+        return this;
+    }
+
+    public Class<? extends View> ViewTemplate() {
+        return viewTemplate;
     }
 
     public Boom templatePath(String path){

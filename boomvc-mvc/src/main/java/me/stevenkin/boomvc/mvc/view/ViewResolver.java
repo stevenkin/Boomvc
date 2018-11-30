@@ -7,6 +7,6 @@ public interface ViewResolver {
 
     View resolve(ModelAndView modelAndView) throws Exception;
 
-    void registerView(Class<? extends View> viewType);
+    void init(Class<? extends View> viewType, String templatePath);
 
 }

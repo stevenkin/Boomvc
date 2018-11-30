@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MvcFilterMapping implements FilterMapping {
+public class DefaultFilterMapping implements FilterMapping {
 
     private List<FilterMappingInfo> registeredFilters = new ArrayList<>();
 
@@ -36,7 +36,7 @@ public class MvcFilterMapping implements FilterMapping {
                 .filter(filter->patternThreadLocal.get().match(filter.filterConfig().filterPathPattern(), request.uri()))
                 .sorted(Comparator.comparing((FilterMappingInfo f)->f.filterConfig().order()).reversed())
                 .collect(Collectors.toList());
-        FilterChain filterChain = new MvcFilterChain();
+        FilterChain filterChain = new DefaultFilterChain();
         mappedFilters.forEach(f->filterChain.addFilter(f.filter()));
         filterChain.dispatcher(this.dispatcher);
         return filterChain;

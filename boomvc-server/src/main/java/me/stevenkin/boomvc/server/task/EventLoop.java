@@ -5,7 +5,7 @@ import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.mvc.filter.FilterMapping;
 import me.stevenkin.boomvc.mvc.filter.FilterRegisterBean;
-import me.stevenkin.boomvc.mvc.filter.imp.MvcFilterMapping;
+import me.stevenkin.boomvc.mvc.filter.imp.DefaultFilterMapping;
 import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.parser.http.HttpProtocolParser;
@@ -43,7 +43,7 @@ public class EventLoop implements Runnable, Task {
         this.dispatcher = dispatcher;
         this.semaphore = semaphore;
         List<FilterRegisterBean> filterRegisterBeans = WebContext.ioc().getBeans(FilterRegisterBean.class);
-        this.filterMapping = new MvcFilterMapping();
+        this.filterMapping = new DefaultFilterMapping();
         this.filterMapping.registerDispatcher(this.dispatcher);
         filterRegisterBeans.forEach(f->this.filterMapping.registerFilter(f));
     }
