@@ -77,7 +77,7 @@ public class Boom {
         return this;
     }
 
-    public Class<? extends View> ViewTemplate() {
+    public Class<? extends View> viewTemplate() {
         return viewTemplate;
     }
 

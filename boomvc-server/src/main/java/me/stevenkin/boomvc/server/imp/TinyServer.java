@@ -42,7 +42,7 @@ public class TinyServer implements Server {
         this.ioc = boom.ioc();
         this.environment = boom.environment();
         this.dispatcher = new DefaultMvcDispatcher();
-        this.dispatcher.init(this.ioc, this.environment, this.boom.ViewTemplate());
+        this.dispatcher.init(this.ioc, this.environment, this.boom.viewTemplate());
         this.workers = new EventExecutorGroup(
                 Integer.parseInt(this.environment.getValue(ENV_KEY_SERVER_IO_THREAD_COUNT, Integer.toString(DEFAULT_IO_THREAD_COUNT))),
                 new NameThreadFactory("@worker"),
