@@ -1,6 +1,6 @@
 package me.stevenkin.boomvc.mvc.exception;
 
-public class ParameterResolverException extends Exception implements InternalException{
+public class ParameterResolverException extends InternalErrorException implements InternalException{
 
     public ParameterResolverException(String message) {
         super(message);

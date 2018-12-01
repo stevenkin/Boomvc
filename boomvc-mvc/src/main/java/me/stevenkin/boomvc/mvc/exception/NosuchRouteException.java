@@ -1,6 +1,6 @@
 package me.stevenkin.boomvc.mvc.exception;
 
-public class NosuchRouteException extends Exception implements InternalException{
+public class NosuchRouteException extends NoFoundException implements InternalException{
 
     public NosuchRouteException() {
         super();

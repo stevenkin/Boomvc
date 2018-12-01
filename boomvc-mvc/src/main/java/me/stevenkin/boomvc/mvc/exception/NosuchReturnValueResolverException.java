@@ -1,6 +1,6 @@
 package me.stevenkin.boomvc.mvc.exception;
 
-public class NosuchReturnValueResolverException extends Exception implements InternalException{
+public class NosuchReturnValueResolverException extends InternalErrorException implements InternalException{
     public NosuchReturnValueResolverException() {
         super();
     }

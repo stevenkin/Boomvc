@@ -81,8 +81,8 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
                 exception = e;
             }
             if(exception != null){
-                this.exceptionHandler.handleException(exception, request, response);
-                return;
+                modelAndView = this.exceptionHandler.handleException(exception);
+                view = this.viewResolver.resolve(modelAndView);
             }
             view.render(modelAndView, request, response);
         }catch (Exception e){

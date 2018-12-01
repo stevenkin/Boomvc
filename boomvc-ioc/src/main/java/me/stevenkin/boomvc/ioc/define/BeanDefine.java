@@ -105,7 +105,7 @@ public class BeanDefine {
         if(configProperties!=null){
             for(Field field : fields) {
                 if (field.getType().equals(String.class)) {
-                    String name = field.getName();
+                    String name = field.getAnnotation(Value.class) != null ? field.getAnnotation(Value.class).value() : field.getName();
                     String key = configProperties.prefix() + "." + name;
                     if(key.startsWith("."))
                         key = key.substring(1);

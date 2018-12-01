@@ -1,5 +1,6 @@
 package me.stevenkin.boomvc.mvc.exception.handler;
 
+import me.stevenkin.boomvc.common.view.ModelAndView;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.ioc.Ioc;
@@ -17,10 +18,9 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     private List<ExceptionHandler> customExceptionHandlers;
 
     @Override
-    public void handleException(Exception e, HttpRequest request, HttpResponse response) {
+    public ModelAndView handleException(Exception e) {
         if(e instanceof InternalException) {
-            this.internalExceptionHandler.handleException(e, request, response);
-            return;
+            return this.internalExceptionHandler.handleException(e);
         }
         ExceptionHandler customExceptionHandler = this.customExceptionHandlers.stream()
                 .filter(c->{
@@ -28,7 +28,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
                     return ((me.stevenkin.boomvc.mvc.annotation.ExceptionHandler) clazz.getAnnotation(me.stevenkin.boomvc.mvc.annotation.ExceptionHandler.class)).exception()
                             .isAssignableFrom(e.getClass());
                 }).findFirst().orElse(this.internalExceptionHandler);
-        customExceptionHandler.handleException(e, request, response);
+        return customExceptionHandler.handleException(e);
     }
 
     public void registerExceptionHandler(Ioc ioc){
