@@ -43,6 +43,8 @@ public class TinyServer implements Server {
         this.environment = boom.environment();
         this.dispatcher = new DefaultMvcDispatcher();
         this.dispatcher.init(this.ioc, this.environment, this.boom.viewTemplate());
+        String contextPath = this.environment.getValue(ENV_KEY_CONTEXT_PATH, "/");
+        AppContext.init(this.boom, contextPath);
         this.workers = new EventExecutorGroup(
                 Integer.parseInt(this.environment.getValue(ENV_KEY_SERVER_IO_THREAD_COUNT, Integer.toString(DEFAULT_IO_THREAD_COUNT))),
                 new NameThreadFactory("@worker"),
@@ -67,8 +69,6 @@ public class TinyServer implements Server {
             throw new RuntimeException(e);
         }
         this.cleanSession = new Thread(new SessionCleaner(this.boom.sessionManager()));
-        String contextPath = this.environment.getValue(ENV_KEY_CONTEXT_PATH, "/");
-        AppContext.init(this.boom, contextPath);
     }
 
     @Override

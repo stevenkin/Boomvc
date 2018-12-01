@@ -1,8 +1,6 @@
 package me.stevenkin.boomvc.mvc.exception.handler;
 
 import me.stevenkin.boomvc.common.view.ModelAndView;
-import me.stevenkin.boomvc.http.HttpRequest;
-import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.exception.InternalException;
 
@@ -33,7 +31,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
 
     public void registerExceptionHandler(Ioc ioc){
         List<ExceptionHandler> exceptionHandlers = ioc.getBeans(ExceptionHandler.class);
-        Optional<ExceptionHandler> internalExceptionHandlerOp = exceptionHandlers.stream().filter(e->InternalExceptionHandler.class.equals(e.getClass())).findFirst();
+        Optional<ExceptionHandler> internalExceptionHandlerOp = exceptionHandlers.stream().filter(e->e instanceof InternalExceptionHandler).findFirst();
         this.internalExceptionHandler = (InternalExceptionHandler) internalExceptionHandlerOp.orElseThrow(RuntimeException::new);
         exceptionHandlers.remove(this.internalExceptionHandler);
         this.customExceptionHandlers = exceptionHandlers.stream()

@@ -15,6 +15,7 @@
         <module>boomvc-server</module>
         <module>boomvc-common</module>
         <module>boomvc-template</module>
+        <module>boomvc-example</module>
     </modules>
 
     <properties>

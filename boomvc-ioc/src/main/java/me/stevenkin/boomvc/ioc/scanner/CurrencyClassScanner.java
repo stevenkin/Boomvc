@@ -6,6 +6,7 @@ import me.stevenkin.boomvc.ioc.annotation.Bean;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
@@ -62,9 +63,11 @@ public class CurrencyClassScanner implements ClassScanner {
                 if(name.startsWith(packagePath)&&name.indexOf(".class")!=-1){
                     String classStr = name.substring(0,name.indexOf(".class")).replaceAll("/",".");
                     Class<?> clazz = Class.forName(classStr);
-                    if(superClass!=null&&!clazz.isAssignableFrom(superClass))
+                    if(superClass!=null&&!superClass.isAssignableFrom(clazz))
                         continue;
                     if(annotationClass != null && Annotations.annotationOfType(clazz, Bean.class, new HashSet<>())==null)
+                        continue;
+                    if(Modifier.isAbstract(clazz.getModifiers()))
                         continue;
                     classSet.add(clazz);
                 }
@@ -93,6 +96,8 @@ public class CurrencyClassScanner implements ClassScanner {
                         continue;
                     if (annotationClass != null && Annotations.annotationOfType(clazz, Bean.class, new HashSet<>())==null)
                         continue;
+                    if(Modifier.isAbstract(clazz.getModifiers()))
+                        continue;
                     classSet.add(clazz);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -104,6 +109,5 @@ public class CurrencyClassScanner implements ClassScanner {
         }
         return classSet;
     }
-
 
 }
