@@ -8,9 +8,7 @@ import me.stevenkin.boomvc.http.kit.PathKit;
 import me.stevenkin.boomvc.http.multipart.FileInfo;
 import me.stevenkin.boomvc.http.multipart.FileItem;
 import me.stevenkin.boomvc.http.session.HttpSession;
-import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.exception.ProtocolParserException;
-import me.stevenkin.boomvc.server.session.SessionManager;
 import me.stevenkin.boomvc.server.stream.LineByteArrayInputStream;
 
 import java.io.ByteArrayInputStream;
@@ -24,6 +22,8 @@ import java.util.*;
 public class TinyHttpRequest implements HttpRequest {
 
     private String  remoteAddress;
+
+    private String contextPath;
 
     private String  uri;
 
@@ -72,7 +72,7 @@ public class TinyHttpRequest implements HttpRequest {
 
     @Override
     public String contextPath() {
-        return WebContext.contextPath();
+        return this.contextPath;
     }
 
     @Override
@@ -206,9 +206,10 @@ public class TinyHttpRequest implements HttpRequest {
         return new ByteArrayInputStream(this.rawBody);
     }
 
-    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, SocketAddress remoteAddress){
+    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, SocketAddress remoteAddress, String contextPath){
         TinyHttpRequest request = new TinyHttpRequest();
         request.requestLine = requestLine;
+        request.contextPath = contextPath;
         request.headers =   ImmutableListMultimap.copyOf(requestHeader);
         request.remoteAddress = remoteAddress.toString();
 
@@ -239,8 +240,8 @@ public class TinyHttpRequest implements HttpRequest {
         return request;
     }
 
-    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, byte[] requestBody, SocketAddress remoteAddress) throws IOException, ProtocolParserException {
-        TinyHttpRequest request = of(requestLine, requestHeader, remoteAddress);
+    public static TinyHttpRequest of(HttpRequestLine requestLine, Multimap<String, HttpHeader> requestHeader, byte[] requestBody, SocketAddress remoteAddress, String contextPath) throws IOException, ProtocolParserException {
+        TinyHttpRequest request = of(requestLine, requestHeader, remoteAddress, contextPath);
         request.rawBody = requestBody;
         request.queryString = "";
         Optional<HttpHeader> headerList = request.firstHeader("Content-Type");

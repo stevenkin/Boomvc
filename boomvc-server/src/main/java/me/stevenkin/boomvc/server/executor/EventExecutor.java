@@ -1,6 +1,7 @@
 package me.stevenkin.boomvc.server.executor;
 
 import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
+import me.stevenkin.boomvc.server.session.SessionManager;
 import me.stevenkin.boomvc.server.task.EventLoop;
 import me.stevenkin.boomvc.server.task.Task;
 
@@ -28,12 +29,12 @@ public class EventExecutor {
     private Semaphore semaphore = new Semaphore(1);
 
 
-    public EventExecutor(ThreadFactory threadName, EventExecutorGroup childGroup, MvcDispatcher dispatcher) throws IOException {
+    public EventExecutor(ThreadFactory threadName, EventExecutorGroup childGroup, MvcDispatcher dispatcher, SessionManager sessionManager) throws IOException {
         this.threadName = threadName;
         this.childGroup = childGroup;
         this.dispatcher = dispatcher;
         this.selector = Selector.open();
-        this.task = new EventLoop(selector, this.childGroup, this.dispatcher, semaphore);
+        this.task = new EventLoop(selector, this.childGroup, this.dispatcher, sessionManager, semaphore);
         this.ioThread = threadName.newThread(this.task);
     }
 

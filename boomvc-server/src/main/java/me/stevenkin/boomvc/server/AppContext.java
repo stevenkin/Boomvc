@@ -4,19 +4,19 @@ import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.server.session.SessionManager;
 
-public class WebContext {
+public class AppContext {
 
     private static String contextPath;
 
     private static Boom boom;
 
     public static void init(Boom boom, String contextPath){
-        WebContext.contextPath = contextPath;
-        WebContext.boom = boom;
+        AppContext.contextPath = contextPath;
+        AppContext.boom = boom;
     }
 
     public static String contextPath(){
-        return WebContext.contextPath;
+        return AppContext.contextPath;
     }
 
     public static SessionManager sessionManager(){

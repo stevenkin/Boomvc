@@ -21,7 +21,7 @@ public class IocFactory {
         ClassScanner scanner = new CurrencyClassScanner();
         packageNames.stream()
                 .flatMap(p->scanner.scanClassByAnnotation(p, Bean.class))
-                .forEach(c->ioc.addBean(c));
+                .forEach(ioc::addBean);
         ioc.init(environment);
         return ioc;
     }

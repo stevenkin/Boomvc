@@ -143,8 +143,8 @@ public class Boom {
         return this;
     }
 
-    public void start(Class<?> mainCls, String... args) {
-        this.bootClass = mainCls;
+    public void start(Class<?> mainClass, String... args) {
+        this.bootClass = mainClass;
         addPackages(bootClass.getPackage().getName());
         initEnv(args);
         initBanner();

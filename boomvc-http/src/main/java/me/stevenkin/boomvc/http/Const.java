@@ -19,7 +19,7 @@ import java.util.List;
 
 public interface Const {
 
-    String DEFAULT_SERVER_PORT = "8090";
+    String DEFAULT_SERVER_PORT = "6000";
     String DEFAULT_SERVER_ADDRESS = "0.0.0.0";
     String LOCAL_IP_ADDRESS = "127.0.0.1";
     String CONTENT_TYPE_HTML = "text/html; charset=UTF-8";

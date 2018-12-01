@@ -6,7 +6,7 @@ import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.mvc.filter.FilterMapping;
 import me.stevenkin.boomvc.mvc.filter.FilterRegisterBean;
 import me.stevenkin.boomvc.mvc.filter.imp.DefaultFilterMapping;
-import me.stevenkin.boomvc.server.WebContext;
+import me.stevenkin.boomvc.server.AppContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.parser.http.HttpProtocolParser;
 import me.stevenkin.boomvc.server.session.SessionManager;
@@ -23,8 +23,6 @@ import java.util.concurrent.Semaphore;
 
 public class EventLoop implements Runnable, Task {
 
-    private static final SessionManager SESSION_MANAGER   = WebContext.sessionManager();
-
     private Selector selector;
 
     private EventExecutorGroup childGroup;
@@ -37,12 +35,15 @@ public class EventLoop implements Runnable, Task {
 
     private Semaphore semaphore;
 
-    public EventLoop(Selector selector, EventExecutorGroup childGroup, MvcDispatcher dispatcher, Semaphore semaphore) {
+    private SessionManager sessionManager;
+
+    public EventLoop(Selector selector, EventExecutorGroup childGroup, MvcDispatcher dispatcher, SessionManager sessionManager, Semaphore semaphore) {
         this.selector = selector;
         this.childGroup = childGroup;
         this.dispatcher = dispatcher;
+        this.sessionManager = sessionManager;
         this.semaphore = semaphore;
-        List<FilterRegisterBean> filterRegisterBeans = WebContext.ioc().getBeans(FilterRegisterBean.class);
+        List<FilterRegisterBean> filterRegisterBeans = AppContext.ioc().getBeans(FilterRegisterBean.class);
         this.filterMapping = new DefaultFilterMapping();
         this.filterMapping.registerDispatcher(this.dispatcher);
         filterRegisterBeans.forEach(f->this.filterMapping.registerFilter(f));
@@ -54,7 +55,7 @@ public class EventLoop implements Runnable, Task {
             try {
                 int n = -1;
                 try {
-                    n = selector.select();
+                    n = selector.select(1000);
                     semaphore.acquire();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -111,7 +112,7 @@ public class EventLoop implements Runnable, Task {
         HttpResponse response;
         if(httpProtocolParser.parsed()){
             request = httpProtocolParser.takeHttpRequest();
-            String id = SESSION_MANAGER.createSession(request);
+            String id = sessionManager.createSession(request);
             response = httpProtocolParser.genHttpResponse();
             if(id != null)
                 response.cookie(SessionManager.SESSION_KEY, id);

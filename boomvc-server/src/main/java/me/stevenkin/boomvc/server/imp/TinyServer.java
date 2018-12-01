@@ -4,9 +4,9 @@ import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
 import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.DefaultMvcDispatcher;
+import me.stevenkin.boomvc.server.AppContext;
 import me.stevenkin.boomvc.server.Boom;
 import me.stevenkin.boomvc.server.Server;
-import me.stevenkin.boomvc.server.WebContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.kit.NameThreadFactory;
 import me.stevenkin.boomvc.server.session.SessionCleaner;
@@ -47,15 +47,16 @@ public class TinyServer implements Server {
                 Integer.parseInt(this.environment.getValue(ENV_KEY_SERVER_IO_THREAD_COUNT, Integer.toString(DEFAULT_IO_THREAD_COUNT))),
                 new NameThreadFactory("@worker"),
                 null,
-                this.dispatcher);
+                this.dispatcher,
+                this.boom.sessionManager());
         this.boss = new EventExecutorGroup(
                 Integer.parseInt(this.environment.getValue(ENV_KEY_SERVER_ACCEPT_THREAD_COUNT, Integer.toString(DEFAULT_ACCEPT_THREAD_COUNT))),
                 new NameThreadFactory("@boss"),
                 this.workers,
-                null);
+                null,
+                this.boom.sessionManager());
         ServerSocketChannel serverSocketChannel;
         try {
-            serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.bind(new InetSocketAddress(this.environment.getValue(ENV_KEY_SERVER_ADDRESS, DEFAULT_SERVER_ADDRESS),
@@ -65,8 +66,9 @@ public class TinyServer implements Server {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        WebContext.init(boom, this.environment.getValue(ENV_KEY_CONTEXT_PATH, "/"));
-        this.cleanSession = new Thread(new SessionCleaner(WebContext.sessionManager()));
+        this.cleanSession = new Thread(new SessionCleaner(this.boom.sessionManager()));
+        String contextPath = this.environment.getValue(ENV_KEY_CONTEXT_PATH, "/");
+        AppContext.init(this.boom, contextPath);
     }
 
     @Override

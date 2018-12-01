@@ -1,6 +1,7 @@
 package me.stevenkin.boomvc.server.executor;
 
 import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
+import me.stevenkin.boomvc.server.session.SessionManager;
 import me.stevenkin.boomvc.server.task.Task;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class EventExecutorGroup implements Task {
     private MvcDispatcher dispatcher;
 
 
-    public EventExecutorGroup(int threadNum, ThreadFactory threadName, EventExecutorGroup childGroup, MvcDispatcher dispatcher) {
+    public EventExecutorGroup(int threadNum, ThreadFactory threadName, EventExecutorGroup childGroup, MvcDispatcher dispatcher, SessionManager sessionManager) {
         this.threadNum = threadNum;
         this.threadName = threadName;
         this.childGroup = childGroup;
@@ -35,7 +36,7 @@ public class EventExecutorGroup implements Task {
         IntStream.of(this.threadNum)
                 .forEach(i-> {
                     try {
-                        this.executorList.add(new EventExecutor(this.threadName, this.childGroup, this.dispatcher));
+                        this.executorList.add(new EventExecutor(this.threadName, this.childGroup, this.dispatcher, sessionManager));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

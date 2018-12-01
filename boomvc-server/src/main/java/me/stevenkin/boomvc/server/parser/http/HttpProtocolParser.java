@@ -3,6 +3,7 @@ package me.stevenkin.boomvc.server.parser.http;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import me.stevenkin.boomvc.http.*;
+import me.stevenkin.boomvc.server.AppContext;
 import me.stevenkin.boomvc.server.exception.ProtocolParserException;
 import me.stevenkin.boomvc.server.http.TinyHttpRequest;
 import me.stevenkin.boomvc.server.http.TinyHttpResponse;
@@ -122,7 +123,7 @@ public class HttpProtocolParser implements ProtocolParser {
                     switch (httpMethod) {
                         case GET:
                             try {
-                                this.requestQueue.add(TinyHttpRequest.of(requestLine, requestHeaders, socketChannel.getRemoteAddress()));
+                                this.requestQueue.add(TinyHttpRequest.of(requestLine, requestHeaders, socketChannel.getRemoteAddress(), AppContext.contextPath()));
                             } catch (IOException e) {
                                 e.printStackTrace();
                                  throw new ProtocolParserException(e);
@@ -153,7 +154,7 @@ public class HttpProtocolParser implements ProtocolParser {
                                     this.body = this.outputStream.copy(this.offset, this.offset + this.contentLength);
                                     this.offset = this.offset + this.contentLength;
                                     try {
-                                        this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress()));
+                                        this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress(), AppContext.contextPath()));
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                         throw new ProtocolParserException(e);
@@ -179,7 +180,7 @@ public class HttpProtocolParser implements ProtocolParser {
                                             this.offset = this.outputStream.count();
                                             this.body = this.bodyOutputStream.toByteArray();
                                             try {
-                                                this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress()));
+                                                this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress(), AppContext.contextPath()));
                                             } catch (IOException e) {
                                                 e.printStackTrace();
                                                 throw new ProtocolParserException(e);
