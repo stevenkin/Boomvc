@@ -26,7 +26,26 @@ public interface Const {
     String CONTENT_TYPE_JSON = "application/json; charset=UTF-8";
     String CONTENT_TYPE_TEXT = "text/plain; charset=UTF-8";
     String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
-    String INTERNAL_SERVER_ERROR_HTML = "<center><h1>500 Internal Server Error</h1><hr/></center>";
+    String INTERNAL_SERVER_ERROR_HTML = "<!DOCTYPE html>\n" +
+            "<html lang=\"en\">\n" +
+            "<head>\n" +
+            "    <meta charset=\"UTF-8\">\n" +
+            "    <title>error</title>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "<center><h1>500 Internal Server Error</h1><hr/></center>\n" +
+            "</body>\n" +
+            "</html>";
+    String NOT_FOUND_ERROR_HTML = "<!DOCTYPE html>\n" +
+            "<html lang=\"en\">\n" +
+            "<head>\n" +
+            "    <meta charset=\"UTF-8\">\n" +
+            "    <title>error</title>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "<center><h1>404 Not Found</h1><hr/></center>\n" +
+            "</body>\n" +
+            "</html>";
     String DEFAULT_THREAD_NAME = "boom_thread_2333_";
     String DEFAULT_BANNER_PATH = "/banner.txt";
     List<String> DEFAULT_STATICS = new ArrayList<>(
