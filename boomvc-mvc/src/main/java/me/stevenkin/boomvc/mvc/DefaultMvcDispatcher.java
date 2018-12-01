@@ -60,7 +60,7 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
     }
 
     @Override
-    public void dispatcher(HttpRequest request, HttpResponse response) {
+    public void dispatcher(HttpRequest request, HttpResponse response) throws Exception{
         boolean bool = true;
         List<Interceptor> interceptors = this.interceptorMapping.interceptorMapping(request);
         for(int index = 0; index < interceptors.size() && bool; index++){
@@ -93,8 +93,8 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
 
     }
 
-    private void renderError(Exception exception, HttpRequest request, HttpResponse response){
-
+    private void renderError(Exception exception, HttpRequest request, HttpResponse response) throws Exception {
+        response.body(Const.INTERNAL_SERVER_ERROR_HTML);
     }
 
     @Override

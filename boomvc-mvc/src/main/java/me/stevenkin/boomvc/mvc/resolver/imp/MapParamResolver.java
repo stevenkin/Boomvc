@@ -4,12 +4,14 @@ import me.stevenkin.boomvc.common.resolver.MethodParameter;
 import me.stevenkin.boomvc.common.resolver.ParameterResolver;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
+import me.stevenkin.boomvc.ioc.annotation.Bean;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+@Bean
 public class MapParamResolver implements ParameterResolver {
     @Override
     public boolean support(MethodParameter parameter) {

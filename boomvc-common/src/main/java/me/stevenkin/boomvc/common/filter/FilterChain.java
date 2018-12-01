@@ -8,7 +8,7 @@ public interface FilterChain {
 
     FilterChain addFilter(Filter f);
 
-    void doFilter(HttpRequest request, HttpResponse response);
+    void doFilter(HttpRequest request, HttpResponse response) throws Exception;
 
     FilterChain dispatcher(MvcDispatcher dispatcher);
 

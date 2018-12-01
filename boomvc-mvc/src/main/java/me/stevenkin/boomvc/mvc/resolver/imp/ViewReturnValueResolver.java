@@ -5,11 +5,13 @@ import me.stevenkin.boomvc.common.view.ModelAndView;
 import me.stevenkin.boomvc.common.view.View;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
+import me.stevenkin.boomvc.ioc.annotation.Bean;
 import me.stevenkin.boomvc.mvc.annotation.Restful;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
+@Bean
 public class ViewReturnValueResolver implements ReturnValueResolver {
     @Override
     public boolean support(Type returnType, Method method) {

@@ -4,6 +4,7 @@ import me.stevenkin.boomvc.common.kit.ReflectKit;
 import me.stevenkin.boomvc.common.resolver.MethodParameter;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
+import me.stevenkin.boomvc.ioc.annotation.Bean;
 import me.stevenkin.boomvc.mvc.annotation.PathParam;
 import me.stevenkin.boomvc.mvc.exception.ParameterResolverException;
 
@@ -11,6 +12,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Optional;
 
+@Bean
 public class PathParamResolver extends AbstractParameterResolver {
 
     @Override

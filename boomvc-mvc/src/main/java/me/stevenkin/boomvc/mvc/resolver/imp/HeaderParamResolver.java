@@ -5,13 +5,14 @@ import me.stevenkin.boomvc.common.resolver.MethodParameter;
 import me.stevenkin.boomvc.http.HttpHeader;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
+import me.stevenkin.boomvc.ioc.annotation.Bean;
 import me.stevenkin.boomvc.mvc.annotation.HeaderParam;
 import me.stevenkin.boomvc.mvc.exception.ParameterResolverException;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
+@Bean
 public class HeaderParamResolver extends AbstractParameterResolver {
 
     @Override

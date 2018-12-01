@@ -5,6 +5,7 @@ import me.stevenkin.boomvc.common.resolver.MethodParameter;
 import me.stevenkin.boomvc.http.HttpQueryParameter;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
+import me.stevenkin.boomvc.ioc.annotation.Bean;
 import me.stevenkin.boomvc.mvc.annotation.QueryParam;
 import me.stevenkin.boomvc.mvc.exception.ParameterResolverException;
 
@@ -12,6 +13,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Bean
 public class QueryParamResolver extends AbstractParameterResolver {
 
     @Override

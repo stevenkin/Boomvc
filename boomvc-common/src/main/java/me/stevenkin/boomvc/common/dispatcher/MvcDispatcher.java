@@ -10,7 +10,7 @@ public interface MvcDispatcher {
 
     void init(Ioc ioc, Environment environment, Class<? extends View> viewTemplate);
 
-    void dispatcher(HttpRequest request, HttpResponse response);
+    void dispatcher(HttpRequest request, HttpResponse response) throws Exception;
 
     void destroy();
 

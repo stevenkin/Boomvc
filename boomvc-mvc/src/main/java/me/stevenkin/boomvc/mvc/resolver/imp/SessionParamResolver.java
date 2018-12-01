@@ -5,7 +5,9 @@ import me.stevenkin.boomvc.common.resolver.ParameterResolver;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.http.session.HttpSession;
+import me.stevenkin.boomvc.ioc.annotation.Bean;
 
+@Bean
 public class SessionParamResolver implements ParameterResolver {
     @Override
     public boolean support(MethodParameter parameter) {

@@ -116,8 +116,6 @@ public class EventLoop implements Runnable, Task {
             if(id != null)
                 response.cookie(SessionManager.SESSION_KEY, id);
             this.filterMapping.mappingFilters(request).doFilter(request, response);
-            /*response.status(200)
-                    .body("hello boomvc");*/
             response.flush();
             httpProtocolParser.putHttpResponse(response);
             key.interestOps(SelectionKey.OP_WRITE);

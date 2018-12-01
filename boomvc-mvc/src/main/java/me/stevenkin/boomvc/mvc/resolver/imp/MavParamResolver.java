@@ -5,8 +5,9 @@ import me.stevenkin.boomvc.common.resolver.ParameterResolver;
 import me.stevenkin.boomvc.common.view.ModelAndView;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
+import me.stevenkin.boomvc.ioc.annotation.Bean;
 
-
+@Bean
 public class MavParamResolver implements ParameterResolver {
     @Override
     public boolean support(MethodParameter parameter) {

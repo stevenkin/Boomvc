@@ -5,8 +5,10 @@ import me.stevenkin.boomvc.common.resolver.MethodParameter;
 import me.stevenkin.boomvc.common.resolver.ParameterResolver;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
+import me.stevenkin.boomvc.ioc.annotation.Bean;
 import me.stevenkin.boomvc.mvc.annotation.BodyParam;
 
+@Bean
 public class BodyParamResolver implements ParameterResolver {
     @Override
     public boolean support(MethodParameter parameter) {
