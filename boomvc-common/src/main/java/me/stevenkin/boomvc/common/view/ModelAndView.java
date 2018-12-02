@@ -8,7 +8,11 @@ public class ModelAndView {
 
     private Object view;
 
-    private boolean isRestful;
+    private boolean isRestful = false;
+
+    private boolean is404 = false;
+
+    private boolean is500 = false;
 
     public ModelAndView addAttribute(String key, Object value){
         model.put(key, value);
@@ -50,5 +54,21 @@ public class ModelAndView {
 
     public void setRestful(boolean restful) {
         isRestful = restful;
+    }
+
+    public boolean isIs404() {
+        return is404;
+    }
+
+    public void setIs404(boolean is404) {
+        this.is404 = is404;
+    }
+
+    public boolean isIs500() {
+        return is500;
+    }
+
+    public void setIs500(boolean is500) {
+        this.is500 = is500;
     }
 }

@@ -25,8 +25,10 @@ public class DefaultFilterChain implements FilterChain {
 
     @Override
     public void doFilter(HttpRequest request, HttpResponse response) throws Exception{
-        if(this.currentIndex >= this.filters.size())
+        if(this.currentIndex >= this.filters.size()) {
             this.dispatcher.dispatcher(request, response);
+            return;
+        }
         try {
             this.filters.get(this.currentIndex++).doFilter(request, response, this);
         } catch (Exception e) {

@@ -88,7 +88,7 @@ public class HttpCookie {
 
     public String cookieString(){
         DateFormat formater = new SimpleDateFormat(
-                "Wdy, DD-Mon-YYYY HH:MM:SS GMT", Locale.US);
+                "Wdy, DD-MM-YYYY HH:MM:SS", Locale.US);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(this.name).append("=").append(this.value).append("; ");
         if(this.domain != null)

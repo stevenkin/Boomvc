@@ -1,11 +1,14 @@
 package me.stevenkin.boomvc.server;
 
 import me.stevenkin.boomvc.common.view.View;
+import me.stevenkin.boomvc.http.Const;
 import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.ioc.IocFactory;
 import me.stevenkin.boomvc.server.imp.TinyServer;
 import me.stevenkin.boomvc.server.session.SessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -22,6 +25,7 @@ import static me.stevenkin.boomvc.http.Const.*;
  */
 
 public class Boom {
+    private static final Logger logger = LoggerFactory.getLogger(Boom.class);
 
     private List<String> packages = new ArrayList<>(Arrays.asList(DEFAULT_SCAN_PACKAGE));
 
@@ -148,10 +152,14 @@ public class Boom {
         addPackages(bootClass.getPackage().getName());
         initEnv(args);
         initBanner();
+        logger.info("boomvc app {} starting", this.environment.getValue(ENV_KEY_APP_NAME, mainClass.getName()));
+        logger.info("scanning packages {}", this.environment.getValue(ENV_KEY_IOC_PACKAGES));
         this.ioc = IocFactory.buildIoc(Arrays.asList(this.environment.getValue(ENV_KEY_IOC_PACKAGES).split(",")), this.environment);
         this.server = new TinyServer();
         this.server.init(this);
         this.server.start();
+        logger.info("boomvc app started");
+        logger.info(BANNER_TEXT);
     }
 
     public Boom bannerPath(String bannerPath){

@@ -10,8 +10,8 @@ import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.annotation.Custom;
-import me.stevenkin.boomvc.mvc.exception.NosuchParameterResolverException;
-import me.stevenkin.boomvc.mvc.exception.NosuchReturnValueResolverException;
+import me.stevenkin.boomvc.mvc.exception.NoSuchParameterResolverException;
+import me.stevenkin.boomvc.mvc.exception.NoSuchReturnValueResolverException;
 import me.stevenkin.boomvc.mvc.rount.RouteMethod;
 
 import java.lang.annotation.Annotation;
@@ -47,7 +47,7 @@ public class DefaultRouteMethodAdapter implements RouteMethodAdapter {
                 }
             }
             if(null == resolver)
-                throw new NosuchParameterResolverException();
+                throw new NoSuchParameterResolverException();
             args.add(resolver.resolve(parameter, request, response));
         }
         Object object = routeMethod.invoke(args);
@@ -60,7 +60,7 @@ public class DefaultRouteMethodAdapter implements RouteMethodAdapter {
             }
         }
         if(null == resolver)
-            throw new NosuchReturnValueResolverException();
+            throw new NoSuchReturnValueResolverException();
         return resolver.resolve(object, routeMethod.getMethod(), returnType, request, response);
     }
 
