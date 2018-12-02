@@ -94,7 +94,6 @@ public abstract class AbstractParameterResolver implements ParameterResolver {
             try {
                 return basicTypeParameterResolve(s, elemtype1);
             } catch (Exception e) {
-                e.printStackTrace();
                 throw new RuntimeException(new ParameterResolverException("type resolve fail"));
             }
         }).collect(Collectors.toList());

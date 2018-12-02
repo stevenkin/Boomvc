@@ -1,12 +1,15 @@
 package me.stevenkin.boomvc.server.session;
 
 import me.stevenkin.boomvc.http.session.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public class SessionCleaner implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(SessionCleaner.class);
 
     private SessionManager sessionManager;
 
@@ -19,14 +22,14 @@ public class SessionCleaner implements Runnable {
         while (true) {
             try {
                 Collection<HttpSession> sessions = sessionManager.sessionMap().values();
-                sessions.parallelStream().filter(this::expires).forEach(sessionManager::destorySession);
+                sessions.stream().filter(this::expires).forEach(sessionManager::destorySession);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("", e);
             } finally {
                 try {
                     TimeUnit.MILLISECONDS.sleep(500);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error("", e);
                 }
             }
 

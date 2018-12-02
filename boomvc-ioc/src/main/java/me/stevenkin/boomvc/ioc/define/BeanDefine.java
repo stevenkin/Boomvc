@@ -5,6 +5,9 @@ import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.ioc.annotation.Autowired;
 import me.stevenkin.boomvc.ioc.annotation.ConfigProperties;
 import me.stevenkin.boomvc.ioc.annotation.Value;
+import me.stevenkin.boomvc.ioc.scanner.CurrencyClassScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,6 +16,7 @@ import java.util.List;
 
 
 public class BeanDefine {
+    private static final Logger logger = LoggerFactory.getLogger(BeanDefine.class);
 
     private String beanName;
 
@@ -117,7 +121,7 @@ public class BeanDefine {
             try {
                 this.object = this.clazz.newInstance();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("class instance error", e);
             }
         }
     }

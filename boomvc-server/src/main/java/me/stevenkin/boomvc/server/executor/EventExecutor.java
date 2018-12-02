@@ -4,6 +4,8 @@ import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
 import me.stevenkin.boomvc.server.session.SessionManager;
 import me.stevenkin.boomvc.server.task.EventLoop;
 import me.stevenkin.boomvc.server.task.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.channels.ClosedChannelException;
@@ -13,6 +15,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 
 public class EventExecutor {
+    private static final Logger logger = LoggerFactory.getLogger(EventExecutor.class);
 
     private ThreadFactory threadName;
 
@@ -53,7 +56,7 @@ public class EventExecutor {
             this.selector.wakeup();
             channel.register(this.selector, ops, att);
         }catch (InterruptedException e){
-            e.printStackTrace();
+            logger.error("", e);
         }finally {
             this.semaphore.release();
         }

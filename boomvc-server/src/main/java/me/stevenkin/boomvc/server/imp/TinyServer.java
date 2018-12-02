@@ -73,7 +73,7 @@ public class TinyServer implements Server {
                     Integer.parseInt(this.environment.getValue(ENV_KEY_SERVER_PORT, DEFAULT_SERVER_PORT))));
             this.boss.register(serverSocketChannel, SelectionKey.OP_ACCEPT);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("", e);
             throw new RuntimeException(e);
         }
         this.cleanSession = new Thread(new SessionCleaner(this.boom.sessionManager()));

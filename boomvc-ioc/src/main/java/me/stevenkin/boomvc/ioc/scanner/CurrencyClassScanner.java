@@ -2,6 +2,8 @@ package me.stevenkin.boomvc.ioc.scanner;
 
 import me.stevenkin.boomvc.ioc.annotation.Annotations;
 import me.stevenkin.boomvc.ioc.annotation.Bean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import java.util.stream.Stream;
  * Created by wjg on 2017/10/28.
  */
 public class CurrencyClassScanner implements ClassScanner {
+    private static final Logger logger = LoggerFactory.getLogger(CurrencyClassScanner.class);
 
     @Override
     public Stream<Class<?>> scanClass(String packageName, Class<?> superClass, Class<? extends Annotation> annotationClass) {
@@ -39,7 +42,7 @@ public class CurrencyClassScanner implements ClassScanner {
             return classSet.stream();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("some errors happened", e);
         }
         return null;
     }
@@ -74,9 +77,9 @@ public class CurrencyClassScanner implements ClassScanner {
             }
             return classSet;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("errors happened", e);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            logger.error("errors happened", e);
         }
         return new HashSet<>();
     }
@@ -100,7 +103,7 @@ public class CurrencyClassScanner implements ClassScanner {
                         continue;
                     classSet.add(clazz);
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    logger.error("class can not be founded", e);
                 }
             }
             if (file1.isDirectory()) {

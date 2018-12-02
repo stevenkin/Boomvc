@@ -5,11 +5,14 @@ import me.stevenkin.boomvc.common.filter.Filter;
 import me.stevenkin.boomvc.common.filter.FilterChain;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultFilterChain implements FilterChain {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultFilterChain.class);
 
     private List<Filter> filters = new ArrayList<>();
 
@@ -32,7 +35,7 @@ public class DefaultFilterChain implements FilterChain {
         try {
             this.filters.get(this.currentIndex++).doFilter(request, response, this);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
     }
 

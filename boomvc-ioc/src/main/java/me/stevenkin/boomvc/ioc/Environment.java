@@ -1,5 +1,9 @@
 package me.stevenkin.boomvc.ioc;
 
+import me.stevenkin.boomvc.ioc.define.FieldInjector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -7,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Environment {
+    private static final Logger logger = LoggerFactory.getLogger(Environment.class);
 
     private static final String PREFIX_CLASSPATH = "classpath:";
 
@@ -35,7 +40,7 @@ public class Environment {
         try {
             inputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("the file {} not found", file);
         }
         if(inputStream!=null){
             return of(inputStream);
@@ -53,7 +58,7 @@ public class Environment {
             });
             return environment;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("load properties error", e);
             return new Environment();
         }
     }
@@ -62,7 +67,7 @@ public class Environment {
         try {
             return of(url.openStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("open url happen error", e);
             return new Environment();
         }
     }
@@ -79,7 +84,7 @@ public class Environment {
             try {
                 return of(new URL(location));
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                logger.error("MalformedURLException", e);
                 return new Environment();
             }
         } else {

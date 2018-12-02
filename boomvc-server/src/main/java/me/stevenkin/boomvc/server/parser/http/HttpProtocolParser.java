@@ -9,6 +9,8 @@ import me.stevenkin.boomvc.server.http.TinyHttpRequest;
 import me.stevenkin.boomvc.server.http.TinyHttpResponse;
 import me.stevenkin.boomvc.server.stream.SearchableByteArrayOutputStream;
 import me.stevenkin.boomvc.server.parser.ProtocolParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,6 +24,7 @@ import java.util.*;
 import static me.stevenkin.boomvc.server.parser.http.ParseStatus.*;
 
 public class HttpProtocolParser implements ProtocolParser {
+    private static final Logger logger = LoggerFactory.getLogger(HttpProtocolParser.class);
 
     private static final byte[] LINEEND = {13, 10};
 
@@ -81,7 +84,7 @@ public class HttpProtocolParser implements ProtocolParser {
         try {
             read();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("", e);
             throw new ProtocolParserException("a io exception happened when readed data", e);
         }
         int index = -1;
@@ -98,7 +101,7 @@ public class HttpProtocolParser implements ProtocolParser {
                         try {
                             this.requestLine = parseHttpRequestLine(this.line);
                         } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
+                            logger.error("", e);
                             throw new ProtocolParserException("url encode error", e);
                         }
                     }
@@ -113,7 +116,7 @@ public class HttpProtocolParser implements ProtocolParser {
                         try {
                             this.requestHeaders = parseHttpRequestHeaders(this.headers);
                         } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
+                            logger.error("", e);
                             throw new ProtocolParserException("url encode error", e);
                         }
                     }
@@ -125,7 +128,7 @@ public class HttpProtocolParser implements ProtocolParser {
                             try {
                                 this.requestQueue.add(TinyHttpRequest.of(requestLine, requestHeaders, socketChannel.getRemoteAddress(), AppContext.contextPath()));
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                logger.error("", e);
                                  throw new ProtocolParserException(e);
                             }
                             clear();
@@ -156,7 +159,7 @@ public class HttpProtocolParser implements ProtocolParser {
                                     try {
                                         this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress(), AppContext.contextPath()));
                                     } catch (IOException e) {
-                                        e.printStackTrace();
+                                        logger.error("", e);
                                         throw new ProtocolParserException(e);
                                     }
                                     clear();
@@ -182,7 +185,7 @@ public class HttpProtocolParser implements ProtocolParser {
                                             try {
                                                 this.requestQueue.add(TinyHttpRequest.of(this.requestLine, this.requestHeaders, this.body, socketChannel.getRemoteAddress(), AppContext.contextPath()));
                                             } catch (IOException e) {
-                                                e.printStackTrace();
+                                                logger.error("", e);
                                                 throw new ProtocolParserException(e);
                                             }
                                             clear();
@@ -201,7 +204,7 @@ public class HttpProtocolParser implements ProtocolParser {
                                             this.status = PARSINGCHUNKEDLENGTH;
                                             goon = true;
                                         } catch (IOException e) {
-                                            e.printStackTrace();
+                                            logger.error("", e);
                                             throw new ProtocolParserException(e);
                                         }
                                         break;

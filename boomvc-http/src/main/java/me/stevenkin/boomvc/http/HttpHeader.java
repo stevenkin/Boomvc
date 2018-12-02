@@ -1,9 +1,13 @@
 package me.stevenkin.boomvc.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class HttpHeader {
+    private static final Logger logger = LoggerFactory.getLogger(HttpHeader.class);
 
     private final String name;
 
@@ -27,7 +31,7 @@ public class HttpHeader {
         try {
             return name + ": " + URLEncoder.encode(value, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error("httpheader value encode error", e);
         }
         return "";
     }

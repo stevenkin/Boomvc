@@ -1,6 +1,9 @@
 package me.stevenkin.boomvc.common.kit;
 
 import org.objectweb.asm.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -15,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ReflectKit {
+    private static final Logger logger = LoggerFactory.getLogger(ReflectKit.class);
 
     private static final Map<Method, String[]> METHOD_NAMES_POOL = new ConcurrentHashMap<>(64);
 
@@ -100,7 +104,7 @@ public final class ReflectKit {
                 }
             }, 0);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
         return parameterNames;
     }

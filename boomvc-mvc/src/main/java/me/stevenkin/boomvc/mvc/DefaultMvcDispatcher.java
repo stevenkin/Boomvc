@@ -20,10 +20,13 @@ import me.stevenkin.boomvc.mvc.mapping.RouteMapping;
 import me.stevenkin.boomvc.mvc.rount.RouteMethod;
 import me.stevenkin.boomvc.mvc.view.DefaultViewResolver;
 import me.stevenkin.boomvc.mvc.view.ViewResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class DefaultMvcDispatcher implements MvcDispatcher {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMvcDispatcher.class);
 
     private InterceptorMapping interceptorMapping;
 
@@ -75,9 +78,12 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
             try {
                 RouteMethod routeMethod = this.routeMapping.mappingRoute(request);
                 modelAndView = this.routeMethodAdapter.handleRoute(request, response, routeMethod);
+                for(int index = interceptors.size() - 1; index >= 0; index--){
+                    interceptors.get(index).postHandle(request, response, modelAndView);
+                }
                 view = this.viewResolver.resolve(modelAndView);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("", e);
                 exception = e;
             }
             if(exception != null){
@@ -85,8 +91,11 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
                 view = this.viewResolver.resolve(modelAndView);
             }
             view.render(modelAndView, request, response);
+            for(int index = interceptors.size() - 1; index >= 0; index--){
+                interceptors.get(index).afterCompletion(request, response, exception);
+            }
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error("", e);
             renderError(e, request, response);
         }
 

@@ -179,7 +179,7 @@ public class Boom {
             try {
                 this.bannerText = Files.newBufferedReader(new File(url.getFile()).toPath()).lines().collect(Collectors.joining("/r/n"));
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("read the file {} error", url.getFile(), e);
             }
         }
 

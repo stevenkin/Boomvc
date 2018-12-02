@@ -2,6 +2,8 @@ package me.stevenkin.boomvc.ioc.define;
 
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.ioc.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 
@@ -9,6 +11,7 @@ import java.lang.reflect.Field;
  * Created by wjg on 2017/10/25.
  */
 public class FieldInjector implements Injector {
+    private static final Logger logger = LoggerFactory.getLogger(FieldInjector.class);
 
     private Ioc ioc;
 
@@ -32,7 +35,7 @@ public class FieldInjector implements Injector {
         try {
             this.field.set(bean,value);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error("the field {} inject value {} happen error", this.field, value);
         }
     }
 }

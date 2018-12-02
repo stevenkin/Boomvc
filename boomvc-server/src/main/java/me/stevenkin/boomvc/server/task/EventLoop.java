@@ -10,6 +10,8 @@ import me.stevenkin.boomvc.server.AppContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.parser.http.HttpProtocolParser;
 import me.stevenkin.boomvc.server.session.SessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class EventLoop implements Runnable, Task {
+    private static final Logger logger = LoggerFactory.getLogger(EventLoop.class);
 
     private Selector selector;
 
@@ -58,14 +61,14 @@ public class EventLoop implements Runnable, Task {
                     n = selector.select(1000);
                     semaphore.acquire();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error("", e);
                 } finally {
                     semaphore.release();
                 }
                 if(n<=0)
                     continue;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("", e);
                 continue;
             }
             Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
@@ -92,7 +95,7 @@ public class EventLoop implements Runnable, Task {
                             e1.printStackTrace();
                         }
                     }
-                    e.printStackTrace();
+                    logger.error("", e);
                 }
             }
         }
