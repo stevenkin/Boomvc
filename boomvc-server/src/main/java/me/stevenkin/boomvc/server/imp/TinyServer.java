@@ -4,7 +4,7 @@ import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
 import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.DefaultMvcDispatcher;
-import me.stevenkin.boomvc.server.AppContext;
+import me.stevenkin.boomvc.mvc.AppContext;
 import me.stevenkin.boomvc.server.Boom;
 import me.stevenkin.boomvc.server.Server;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
@@ -48,7 +48,7 @@ public class TinyServer implements Server {
         this.dispatcher.init(this.ioc, this.environment, this.boom.viewTemplate());
         String contextPath = this.environment.getValue(ENV_KEY_CONTEXT_PATH, "/");
         logger.info("app context path is {}", contextPath);
-        AppContext.init(this.boom, contextPath);
+        AppContext.init(ioc, environment, contextPath);
         logger.info("accept thread num is {}", this.environment.getValue(ENV_KEY_SERVER_ACCEPT_THREAD_COUNT, "1"));
         logger.info("io thread num is {}", this.environment.getValue(ENV_KEY_SERVER_IO_THREAD_COUNT ,"1"));
         logger.info("server bind port is {}", this.environment.getValue(ENV_KEY_SERVER_PORT, DEFAULT_SERVER_PORT));

@@ -3,6 +3,8 @@ package me.stevenkin.boomvc.mvc.exception.handler;
 import me.stevenkin.boomvc.common.view.ModelAndView;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.exception.InternalException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
 import java.util.List;
@@ -10,7 +12,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DefaultExceptionHandler implements ExceptionHandler {
-
     private InternalExceptionHandler internalExceptionHandler;
 
     private List<ExceptionHandler> customExceptionHandlers;

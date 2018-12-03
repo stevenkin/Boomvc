@@ -6,7 +6,7 @@ import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.mvc.filter.FilterMapping;
 import me.stevenkin.boomvc.mvc.filter.FilterRegisterBean;
 import me.stevenkin.boomvc.mvc.filter.imp.DefaultFilterMapping;
-import me.stevenkin.boomvc.server.AppContext;
+import me.stevenkin.boomvc.mvc.AppContext;
 import me.stevenkin.boomvc.server.executor.EventExecutorGroup;
 import me.stevenkin.boomvc.server.parser.http.HttpProtocolParser;
 import me.stevenkin.boomvc.server.session.SessionManager;
@@ -119,7 +119,9 @@ public class EventLoop implements Runnable, Task {
             response = httpProtocolParser.genHttpResponse();
             if(id != null)
                 response.cookie(SessionManager.SESSION_KEY, id);
+            AppContext.initAppContext(request, response);
             this.filterMapping.mappingFilters(request).doFilter(request, response);
+            AppContext.destroyAppContext();
             response.flush();
             httpProtocolParser.putHttpResponse(response);
             key.interestOps(SelectionKey.OP_WRITE);
@@ -143,8 +145,7 @@ public class EventLoop implements Runnable, Task {
                     key.interestOps(SelectionKey.OP_READ);
                 break;
             }
-            int count = socketChannel.write(buffer);
-            System.out.println("write count = "+count);
+            socketChannel.write(buffer);
         } while(!buffer.hasRemaining());
         if(buffer != null)
             httpProtocolParser.putResponseBuffer(buffer);

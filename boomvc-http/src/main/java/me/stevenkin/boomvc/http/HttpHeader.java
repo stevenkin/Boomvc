@@ -28,11 +28,6 @@ public class HttpHeader {
 
     @Override
     public String toString() {
-        try {
-            return name + ": " + URLEncoder.encode(value, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            logger.error("httpheader value encode error", e);
-        }
-        return "";
+        return name + ": " +value;
     }
 }

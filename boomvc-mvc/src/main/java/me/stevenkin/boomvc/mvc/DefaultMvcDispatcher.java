@@ -1,5 +1,6 @@
 package me.stevenkin.boomvc.mvc;
 
+import com.google.common.base.Splitter;
 import me.stevenkin.boomvc.common.dispatcher.MvcDispatcher;
 import me.stevenkin.boomvc.common.interceptor.Interceptor;
 import me.stevenkin.boomvc.common.view.ModelAndView;
@@ -7,6 +8,7 @@ import me.stevenkin.boomvc.common.view.View;
 import me.stevenkin.boomvc.http.Const;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
+import me.stevenkin.boomvc.http.kit.PathKit;
 import me.stevenkin.boomvc.ioc.Environment;
 import me.stevenkin.boomvc.ioc.Ioc;
 import me.stevenkin.boomvc.mvc.adapter.DefaultRouteMethodAdapter;
@@ -23,7 +25,11 @@ import me.stevenkin.boomvc.mvc.view.ViewResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static me.stevenkin.boomvc.http.Const.ENV_KEY_CONTEXT_PATH;
+import static me.stevenkin.boomvc.http.Const.ENV_KEY_STATIC_LIST;
 
 public class DefaultMvcDispatcher implements MvcDispatcher {
     private static final Logger logger = LoggerFactory.getLogger(DefaultMvcDispatcher.class);
@@ -37,6 +43,12 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
     private ViewResolver viewResolver;
 
     private DefaultExceptionHandler exceptionHandler;
+
+    private StaticHandler staticHandler;
+
+    private List<String> statics = new ArrayList<>();
+
+    private String contextPath;
 
     @Override
     public void init(Ioc ioc, Environment environment, Class<? extends View> viewTemplate) {
@@ -57,9 +69,28 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
         this.viewResolver = new DefaultViewResolver();
         this.viewResolver.init(viewTemplate, environment.getValue(Const.ENV_KEY_TEMPLATE_PATH, "/template/"));
 
-        //init exceptionHandler
+        //init exception Handler
         this.exceptionHandler = new DefaultExceptionHandler();
         this.exceptionHandler.registerExceptionHandler(ioc);
+
+        //init static handler
+        boolean showDir = Boolean.valueOf(environment.getValue(ENV_KEY_STATIC_LIST, "false"));
+        this.staticHandler = new DefaultStaticHandler(showDir);
+
+        this.contextPath = environment.getValue(ENV_KEY_CONTEXT_PATH, "/");
+
+        //get static path
+        String staticStr = environment.getValue(Const.ENV_KEY_STATIC_DIRS);
+        if(staticStr == null || staticStr.length() == 0) {
+            this.statics.addAll(Const.DEFAULT_STATICS);
+            return;
+        }
+        List<String> stringList = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(staticStr);
+        if(stringList.size() == 0){
+            this.statics.addAll(Const.DEFAULT_STATICS);
+            return;
+        }
+        this.statics.addAll(stringList);
     }
 
     @Override
@@ -76,6 +107,11 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
             View view = null;
             Exception exception = null;
             try {
+                if(isStatic(request.uri())){
+                    String uri = PathKit.cleanPath(request.uri().replace(this.contextPath, "/"));
+                    staticHandler.handleStatic(uri, request, response);
+                    return;
+                }
                 RouteMethod routeMethod = this.routeMapping.mappingRoute(request);
                 modelAndView = this.routeMethodAdapter.handleRoute(request, response, routeMethod);
                 for(int index = interceptors.size() - 1; index >= 0; index--){
@@ -83,7 +119,6 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
                 }
                 view = this.viewResolver.resolve(modelAndView);
             } catch (Exception e) {
-                logger.error("", e);
                 exception = e;
             }
             if(exception != null){
@@ -109,5 +144,11 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
     @Override
     public void destroy() {
 
+    }
+
+    private boolean isStatic(String uri){
+        uri = PathKit.cleanPath(uri.replace(this.contextPath, "/"));
+        String uri1 = uri;
+        return this.statics.stream().anyMatch(uri1::startsWith);
     }
 }

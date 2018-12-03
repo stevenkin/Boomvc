@@ -3,7 +3,7 @@ package me.stevenkin.boomvc.server.parser.http;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import me.stevenkin.boomvc.http.*;
-import me.stevenkin.boomvc.server.AppContext;
+import me.stevenkin.boomvc.mvc.AppContext;
 import me.stevenkin.boomvc.server.exception.ProtocolParserException;
 import me.stevenkin.boomvc.server.http.TinyHttpRequest;
 import me.stevenkin.boomvc.server.http.TinyHttpResponse;
