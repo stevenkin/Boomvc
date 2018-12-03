@@ -22,11 +22,11 @@ public class InternalExceptionHandler implements ExceptionHandler {
     public ModelAndView handleException(Exception e) {
         ModelAndView modelAndView = new ModelAndView();
         if(e instanceof NoFoundException){
-            logger.warn("reqest url '" + AppContext.request().url() + "' not found");
+            logger.warn("request url '" + AppContext.request().url() + "' not found");
             modelAndView.setIs404(true);
             modelAndView.setView(page404);
         }else{
-            logger.error("server happen a inner error when reqest url '" + AppContext.request().url() + "'");
+            logger.error("server happen a inner error when request url '" + AppContext.request().url() + "'");
             modelAndView.setIs500(true);
             modelAndView.setView(page500);
         }
