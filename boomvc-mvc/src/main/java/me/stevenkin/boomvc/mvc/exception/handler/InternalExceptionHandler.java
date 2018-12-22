@@ -26,7 +26,7 @@ public class InternalExceptionHandler implements ExceptionHandler {
             modelAndView.setIs404(true);
             modelAndView.setView(page404);
         }else{
-            logger.error("server happen a inner error when request url '" + AppContext.request().url() + "'");
+            logger.error("server happen a inner error when request url '" + AppContext.request().url() + "'", e);
             modelAndView.setIs500(true);
             modelAndView.setView(page500);
         }
