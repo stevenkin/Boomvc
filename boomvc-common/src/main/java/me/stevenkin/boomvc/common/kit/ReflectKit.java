@@ -69,7 +69,7 @@ public final class ReflectKit {
     private static String[] getMethodParameterNamesByAsm4(Class<?> clazz, final Method method) {
         final Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes == null || parameterTypes.length == 0) {
-            return null;
+            return new String[0];
         }
         final Type[] types = new Type[parameterTypes.length];
         for (int i = 0; i < parameterTypes.length; i++) {

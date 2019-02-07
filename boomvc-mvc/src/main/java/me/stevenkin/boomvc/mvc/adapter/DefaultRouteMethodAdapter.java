@@ -50,7 +50,7 @@ public class DefaultRouteMethodAdapter implements RouteMethodAdapter {
                 throw new NoSuchParameterResolverException();
             args.add(resolver.resolve(parameter, request, response));
         }
-        Object object = routeMethod.invoke(args);
+        Object object = routeMethod.invoke(args.toArray(new Object[args.size()]));
         Type returnType = routeMethod.getMethod().getReturnType();
         ReturnValueResolver resolver = null;
         for (ReturnValueResolver resolver1 : returnValueResolvers){

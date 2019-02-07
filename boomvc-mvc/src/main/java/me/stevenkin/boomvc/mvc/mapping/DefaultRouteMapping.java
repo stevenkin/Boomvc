@@ -29,12 +29,13 @@ public class DefaultRouteMapping implements RouteMapping {
 
 
     private boolean isHandle(Class<?> clazz){
-        return clazz.getAnnotation(Path.class) != null;
+        return clazz.getAnnotation(Path.class) != null || clazz.getAnnotation(RestPath.class) != null;
     }
 
     private void registerRoute(Class<?> handle, Object target){
         Path path = handle.getAnnotation(Path.class);
-        String prefix = path.value();
+        RestPath restPath = handle.getAnnotation(RestPath.class);
+        String prefix = path != null ? path.value() : restPath != null ? restPath.value() : "";
         Method[] methods = handle.getDeclaredMethods();
         for(Method method : methods){
             if(isRouteMethod(method)){

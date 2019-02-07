@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class UrlPatternCondition implements Condition {
 
@@ -20,6 +21,8 @@ public class UrlPatternCondition implements Condition {
     private String prefix;
 
     private String urlPattern;
+
+    private boolean isSimpleModel;
 
     private List<String> templateNames = new ArrayList<>();
 
@@ -31,6 +34,11 @@ public class UrlPatternCondition implements Condition {
         this.urlPath = urlPath;
         this.prefix = prefix;
         this.urlPattern = getUrlPattern(urlPath, prefix);
+        if(isSimpleModel(this.urlPattern)){
+            this.isSimpleModel = true;
+        }else{
+            this.isSimpleModel = false;
+        }
         this.patternThreadLocal = new ThreadLocal<Pattern>(){
             @Override
             public Pattern initialValue(){
@@ -42,17 +50,14 @@ public class UrlPatternCondition implements Condition {
     private String getUrlPattern(String urlPath, String prefix){
         String completePath = PathKit.cleanPath(parsePath(prefix) + parsePath(urlPath));
         List<String> pathList = Splitter.on('/').omitEmptyStrings().trimResults().splitToList(completePath);
-        StringBuilder regxPath = new StringBuilder("^");
-        pathList.forEach(p->{
-            regxPath.append("/");
+        String regxPath = pathList.stream().map(p->{
             if(isTemplatePath(p)){
                 this.templateNames.add(p.substring(1,p.length()-1));
-                regxPath.append("([^/]+)");
+                return "([^/]+)";
             }else
-                regxPath.append(p);
-        });
-        regxPath.append("$");
-        return regxPath.toString();
+                return p;
+        }).collect(Collectors.joining("/", "^/", "$"));
+        return regxPath;
     }
 
     private void checkPath(String path){
@@ -62,6 +67,10 @@ public class UrlPatternCondition implements Condition {
 
     private boolean isTemplatePath(String path){
         return path.length() > 2 && path.startsWith("{") && path.endsWith("}");
+    }
+
+    private boolean isSimpleModel(String urlPattern){
+        return !urlPattern.contains("([^/]+)");
     }
 
     private String parsePath(String path) {
@@ -82,6 +91,8 @@ public class UrlPatternCondition implements Condition {
         boolean match = matcher.matches();
         if(!match)
             return false;
+        if(isSimpleModel)
+            return true;
         String sub;
         int i = 1;
         int j = 0;

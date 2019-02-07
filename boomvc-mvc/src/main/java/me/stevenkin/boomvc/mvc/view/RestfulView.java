@@ -14,6 +14,5 @@ public class RestfulView implements View {
     public void render(ModelAndView modelAndView, HttpRequest request, HttpResponse response) throws Exception {
         Map<String, Object> model = modelAndView.getModel();
         response.json((String) model.get(RESTFUL_RESPONSE));
-        response.flush();
     }
 }

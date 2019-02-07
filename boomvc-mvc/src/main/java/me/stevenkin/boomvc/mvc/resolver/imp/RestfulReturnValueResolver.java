@@ -6,6 +6,7 @@ import me.stevenkin.boomvc.common.view.ModelAndView;
 import me.stevenkin.boomvc.http.HttpRequest;
 import me.stevenkin.boomvc.http.HttpResponse;
 import me.stevenkin.boomvc.ioc.annotation.Bean;
+import me.stevenkin.boomvc.mvc.annotation.RestPath;
 import me.stevenkin.boomvc.mvc.annotation.Restful;
 
 import java.lang.reflect.Method;
@@ -18,7 +19,9 @@ public class RestfulReturnValueResolver implements ReturnValueResolver {
 
     @Override
     public boolean support(Type returnType, Method method){
-        return method.getAnnotation(Restful.class) != null && !Void.class.equals(returnType);
+        return (method.getAnnotation(Restful.class) != null
+                || method.getDeclaringClass().getAnnotation(RestPath.class) != null)
+                && !Void.class.equals(returnType);
     }
 
     @Override

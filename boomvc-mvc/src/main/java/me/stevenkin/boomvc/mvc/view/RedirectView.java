@@ -11,6 +11,5 @@ public class RedirectView implements View {
     @Override
     public void render(ModelAndView modelAndView, HttpRequest request, HttpResponse response) throws Exception {
         response.redirect(((String)modelAndView.getView()).substring(REDIRECT_PREFIX.length()));
-        response.flush();
     }
 }

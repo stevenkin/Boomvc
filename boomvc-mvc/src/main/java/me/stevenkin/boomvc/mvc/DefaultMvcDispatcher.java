@@ -64,6 +64,7 @@ public class DefaultMvcDispatcher implements MvcDispatcher {
         //init route method adapter
         this.routeMethodAdapter = new DefaultRouteMethodAdapter();
         this.routeMethodAdapter.registerParameterResolver(ioc);
+        this.routeMethodAdapter.registerReturnValueResolver(ioc);
 
         //init view resolver
         this.viewResolver = new DefaultViewResolver();
