@@ -35,6 +35,14 @@ public static void main(String[] args) {
 ```
 - 写一个Controller
 ```java
+@RestPath
+public class TestController {
 
+    @GetRoute("/")
+    public String hello(){
+        return "hello world";
+    }
+}
 ```
+- 用浏览器打开http://127.0.0.1:8000/ 就可以看到hello world了！
 
