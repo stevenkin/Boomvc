@@ -55,7 +55,6 @@ public interface Const {
     String PROP_NAME = "classpath:application.properties";
     String DEFAULT_SCAN_PACKAGE = "me.stevenkin.boomvc";
 
-    String REDIRECT_URL = "redirect_url";
     String REDIRECT_PREFIX = "redirect:";
 
     // Env key

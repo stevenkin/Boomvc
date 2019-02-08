@@ -4,7 +4,7 @@ import me.stevenkin.boomvc.ioc.annotation.Bean;
 
 import java.lang.annotation.*;
 
-@Target(ElementType.PARAMETER)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Bean
