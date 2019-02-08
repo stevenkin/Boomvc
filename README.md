@@ -141,7 +141,7 @@ public class TestController {
     
 }
 ```
--模板引擎
+- 模板引擎
 >目前框架默认提供FreeMarker作为模板引擎，如果要使用，请先引入依赖
 ```xml
 <dependency>
