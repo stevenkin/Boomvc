@@ -227,3 +227,8 @@ public class WebAppConfig extends WebMvcConfigurerAdapter{
 ```
 >是不是有点像spring boot的风格？
 :flushed:
+
+### 特别感谢
+>Boomvc 的部分代码风格和灵感来自于一下项目
+- [SpringMvc](https://github.com/spring-projects/spring-framework)
+- [blade](https://github.com/lets-blade/blade)
