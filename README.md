@@ -229,6 +229,6 @@ public class WebAppConfig extends WebMvcConfigurerAdapter{
 :flushed:
 
 ### 特别感谢
->Boomvc 的部分代码风格和灵感来自于一下项目
-- [SpringMvc](https://github.com/spring-projects/spring-framework)
+>Boomvc 的部分代码风格和灵感来自于以下项目
+- [SpringMVC](https://github.com/spring-projects/spring-framework)
 - [blade](https://github.com/lets-blade/blade)
