@@ -49,10 +49,6 @@ public class TinyServer implements Server {
         String contextPath = this.environment.getValue(ENV_KEY_CONTEXT_PATH, "/");
         logger.info("app context path is {}", contextPath);
         AppContext.init(ioc, environment, contextPath);
-        logger.info("accept thread num is {}", this.environment.getValue(ENV_KEY_SERVER_ACCEPT_THREAD_COUNT, "1"));
-        logger.info("io thread num is {}", this.environment.getValue(ENV_KEY_SERVER_IO_THREAD_COUNT ,"1"));
-        logger.info("server bind port is {}", this.environment.getValue(ENV_KEY_SERVER_PORT, DEFAULT_SERVER_PORT));
-        logger.info("server bind address is {}", this.environment.getValue(ENV_KEY_SERVER_ADDRESS, DEFAULT_SERVER_ADDRESS));
         this.workers = new EventExecutorGroup(
                 Integer.parseInt(this.environment.getValue(ENV_KEY_SERVER_IO_THREAD_COUNT, Integer.toString(DEFAULT_IO_THREAD_COUNT))),
                 new NameThreadFactory("@worker"),
@@ -77,6 +73,10 @@ public class TinyServer implements Server {
             throw new RuntimeException(e);
         }
         this.cleanSession = new Thread(new SessionCleaner(this.boom.sessionManager()));
+        logger.info("accept thread num is {}", this.environment.getValue(ENV_KEY_SERVER_ACCEPT_THREAD_COUNT, "1"));
+        logger.info("io thread num is {}", this.environment.getValue(ENV_KEY_SERVER_IO_THREAD_COUNT ,"1"));
+        logger.info("server bind port is {}", this.environment.getValue(ENV_KEY_SERVER_PORT, DEFAULT_SERVER_PORT));
+        logger.info("server bind address is {}", this.environment.getValue(ENV_KEY_SERVER_ADDRESS, DEFAULT_SERVER_ADDRESS));
     }
 
     @Override
