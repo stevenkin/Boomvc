@@ -226,6 +226,7 @@ public class WebAppConfig extends WebMvcConfigurerAdapter{
 }
 ```
 >是不是有点像spring boot的风格？
+>idea里可以用wsl里的git啦。。。
 :flushed:
 
 ### 特别感谢
